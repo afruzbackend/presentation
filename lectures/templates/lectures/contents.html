@@ -1,0 +1,45 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block title %}Mundarija — {{ course.title }}{% endblock %}
+{% block view %}mavzular{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Mundarija</span>{% endblock %}
+{% block content %}
+<section class="view contents">
+  <div class="page-head">
+    <div><div class="eyebrow"><span class="dot"></span>Mundarija</div><h1>Barcha mavzular</h1>
+      <p class="muted">{% if q %}«{{ q }}» bo‘yicha {{ found }} ta mavzu topildi · <a class="link" href="{% url 'lectures:contents' course.slug %}">tozalash</a>{% else %}Mavzu ustiga bosing — darslik slaydlari ochiladi.{% endif %}</p></div>
+    {% if not exporting %}
+    <form class="filters" method="get">
+      <div class="seg">
+        <button name="f" value="all" class="{% if kind == 'all' %}on{% endif %}">Barchasi</button>
+        <button name="f" value="Nazariy" class="{% if kind == 'Nazariy' %}on{% endif %}">Nazariy</button>
+        <button name="f" value="Amaliy" class="{% if kind == 'Amaliy' %}on{% endif %}">Amaliy</button>
+      </div>
+      <label class="search">{% icon 'search' 18 %}<input name="q" value="{{ q }}" placeholder="Qidirish…"></label>
+    </form>
+    {% endif %}
+  </div>
+
+  {% for g in groups %}
+  <div class="cgroup" id="{% if g.part %}p{{ g.part.pk }}{% else %}boshqa{% endif %}" style="--g:{% if g.part %}{{ g.part.color }}{% else %}{{ course.color }}{% endif %}">
+    <div class="cgroup-head"><span class="group-ic">{% if g.part %}{% icon g.part.icon 20 %}{% else %}{% icon 'book' 20 %}{% endif %}</span>
+      <h2>{% if g.part %}{{ g.part.name }}{% elif groups|length > 1 %}Boshqa mavzular{% else %}Mavzular{% endif %}</h2><small>{{ g.topics|length }} ta</small></div>
+    <div class="cards">
+      {% for t in g.topics %}
+      <a class="card rv" style="{{ forloop.counter0|delay }}" href="{% url 'lectures:slide' course.slug t.number 0 %}" data-tilt>
+        <span class="card-num">{{ t.number|pad2 }}</span>
+        <span class="badge {% if t.kind == 'Nazariy' %}nz{% else %}am{% endif %}">{{ t.kind }}</span>
+        <span class="card-ic">{% icon t.scene|scene_icon 22 %}</span>
+        <b class="card-title">{{ t.title }}</b>
+        <ol class="card-plan">{% for s in t.sections.all %}<li>{{ s.title }}</li>{% endfor %}</ol>
+        <span class="card-go">Ochish {% icon 'arrowRight' 16 %}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% empty %}
+  <p class="muted center">Hech narsa topilmadi.</p>
+  {% endfor %}
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

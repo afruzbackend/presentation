@@ -1,0 +1,177 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}{{ t.number }}-mavzu — {{ course.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><span>{{ t.number }}-mavzu</span>{% endblock %}
+{% block content %}
+<div class="st-topic-head" style="--g:{{ t.color }}">
+  <span class="t-num">{{ t.number|pad2 }}</span>
+  <div><small>{{ t.kind }}{% if t.part %} · {{ t.part.name }}{% endif %}</small><h2>{{ t.title }}</h2></div>
+  <div class="st-course-actions">
+    <a class="btn ghost sm" href="{% url 'lectures:slide' course.slug t.number 0 %}" target="_blank">{% icon 'play' 16 %} Ko‘rish</a>
+    <a class="btn ghost sm danger" href="{% url 'studio:topic_delete' course.slug t.number %}">{% icon 'close' 16 %} O‘chirish</a>
+  </div>
+</div>
+
+<nav class="st-tabs sub">
+  <a href="?tab=asosiy" class="{% if tab == 'asosiy' %}on{% endif %}">{% icon 'target' 16 %} Asosiy</a>
+  <a href="?tab=reja" class="{% if tab == 'reja' %}on{% endif %}">{% icon 'book' 16 %} Reja bo‘limlari <em>{{ sections|length }}</em></a>
+  <a href="?tab=resurslar" class="{% if tab == 'resurslar' %}on{% endif %}">{% icon 'monitor' 16 %} Taqdimot, video, materiallar <em>{{ resources|length }}</em></a>
+  <a href="?tab=test" class="{% if tab == 'test' %}on{% endif %}">{% icon 'test' 16 %} Testlar <em>{{ tests|length }}</em></a>
+  <a href="?tab=savoljavob" class="{% if tab == 'savoljavob' %}on{% endif %}">{% icon 'question' 16 %} Tezkor savol-javob <em>{{ qa|length }}</em></a>
+  <a href="?tab=qoshimcha" class="{% if tab == 'qoshimcha' %}on{% endif %}">{% icon 'pen' 16 %} Savollar va mustaqil ta’lim</a>
+</nav>
+
+{% if tab == 'asosiy' %}
+<form method="post" class="st-grid">
+  {% csrf_token %}
+  <section class="st-card">
+    <div class="st-fields">
+      {% include 'lectures/studio/field.html' with f=form.title wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.kind %}
+      {% include 'lectures/studio/field.html' with f=form.hours %}
+      {% include 'lectures/studio/field.html' with f=form.part wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.goal wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.result wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.methods wide=True %}
+    </div>
+    <button class="btn primary">{% icon 'check' 18 %} Saqlash</button>
+  </section>
+  <aside class="st-card">
+    <h3>{% icon 'sparkles' 18 %} 3D ko‘rgazma</h3>
+    <div class="st-scene-preview">{% scene t.scene True %}</div>
+    <div class="scene-picks">
+      {% for val, name in scenes %}
+      <label class="scene-pick"><input type="radio" name="scene" value="{{ val }}" {% if form.scene.value == val %}checked{% endif %}>
+        <span>{% icon val|scene_icon 20 %}<b>{{ name }}</b></span></label>
+      {% endfor %}
+    </div>
+    <p class="help">Tanlab «Saqlash»ni bosing — ko‘rgazma yangilanadi.</p>
+  </aside>
+</form>
+
+{% elif tab == 'reja' %}
+<div class="st-grid">
+  <section>
+    <div class="st-list">
+      {% for sec in sections %}
+      <div class="st-row" style="--g:{{ t.color }}">
+        <span class="st-num">{{ forloop.counter }}</span>
+        <a class="st-row-main" href="{% url 'studio:section' course.slug t.number sec.pk %}">
+          <b>{{ sec.title }}</b><small>{{ sec.blocks|length }} ta blok · bosib tahrirlang</small></a>
+        <div class="st-acts">
+          <form method="post" action="{% url 'studio:section_action' course.slug t.number sec.pk 'up' %}">{% csrf_token %}<button class="act" {% if forloop.first %}disabled{% endif %}>↑</button></form>
+          <form method="post" action="{% url 'studio:section_action' course.slug t.number sec.pk 'down' %}">{% csrf_token %}<button class="act" {% if forloop.last %}disabled{% endif %}>↓</button></form>
+          <form method="post" action="{% url 'studio:section_action' course.slug t.number sec.pk 'delete' %}">{% csrf_token %}<button class="act danger" title="O‘chirish">{% icon 'close' 14 %}</button></form>
+        </div>
+      </div>
+      {% empty %}<div class="st-empty">{% icon 'book' 36 %}<h3>Reja bo‘limi yo‘q</h3><p class="muted">Har bir reja bo‘limi darslikda alohida slayd bo‘ladi.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+  <aside>
+    <form method="post" class="st-card sticky">
+      {% csrf_token %}
+      <h3>{% icon 'plus' 18 %} Yangi reja bo‘limi</h3>
+      {% include 'lectures/studio/field.html' with f=sec_form.title %}
+      <button class="btn primary wide-btn">{% icon 'plus' 18 %} Qo‘shish va to‘ldirish</button>
+    </form>
+  </aside>
+</div>
+
+{% elif tab == 'test' %}
+<div class="st-head small">
+  <p class="muted">Har bir savolga 2–4 ta variant va bitta to‘g‘ri javob. O‘quvchi tanlaganida darhol tekshiriladi.</p>
+  <a class="btn primary" href="{% url 'studio:test_new' course.slug t.number %}">{% icon 'plus' 18 %} Savol qo‘shish</a>
+</div>
+<div class="st-tests">
+  {% for q in tests %}
+  <div class="st-test">
+    <div class="st-test-q"><span class="qn">{{ forloop.counter }}</span><b>{{ q.text }}</b></div>
+    <ol class="st-test-opts">{% for o in q.options %}<li class="{% if forloop.counter0 == q.answer %}right{% endif %}"><i>{{ forloop.counter0|letter }}</i>{{ o }}</li>{% endfor %}</ol>
+    <div class="st-acts">
+      <a class="act" href="{% url 'studio:test' course.slug t.number q.pk %}" title="Tahrirlash">{% icon 'pen' 14 %}</a>
+      <form method="post" action="{% url 'studio:test_delete' course.slug t.number q.pk %}">{% csrf_token %}<button class="act danger" title="O‘chirish">{% icon 'close' 14 %}</button></form>
+    </div>
+  </div>
+  {% empty %}<div class="st-empty">{% icon 'test' 36 %}<h3>Test savoli yo‘q</h3><p class="muted">Savollar bo‘lmasa, «Savol va test» slaydi chiqmaydi.</p></div>
+  {% endfor %}
+</div>
+
+{% elif tab == 'resurslar' %}
+<div class="st-grid">
+  <section>
+    <div class="st-list">
+      {% for x in resources %}
+      <div class="st-row res-row k-{{ x.kind }}">
+        <span class="st-num">{% if x.kind == 'video' %}{% icon 'video' 18 %}{% elif x.kind == 'slides' %}{% icon 'monitor' 18 %}{% elif x.kind == 'tech' %}{% icon 'layers' 18 %}{% else %}{% icon 'file' 18 %}{% endif %}</span>
+        <a class="st-row-main" href="{% url 'studio:resource' course.slug x.pk %}"><b>{{ x.title }}</b><small>{{ x.get_kind_display }}{% if x.file %} · {{ x.ext|upper }} · {{ x.file_size|filesizeformat }}{% endif %}{% if x.url %} · {% if x.url|youtube %}YouTube{% else %}havola{% endif %}{% endif %}</small></a>
+        <div class="st-acts">
+          {% if x.file %}<a class="act" href="{{ x.file.url }}" target="_blank" title="Ochish">{% icon 'download' 14 %}</a>{% elif x.url %}<a class="act" href="{{ x.url }}" target="_blank">{% icon 'link' 14 %}</a>{% endif %}
+          <a class="act" href="{% url 'studio:resource' course.slug x.pk %}" title="Tahrirlash">{% icon 'pen' 14 %}</a>
+          <form method="post" action="{% url 'studio:resource_delete' course.slug x.pk %}">{% csrf_token %}<button class="act danger" title="O‘chirish">{% icon 'close' 14 %}</button></form>
+        </div>
+      </div>
+      {% empty %}
+      <div class="st-empty">{% icon 'monitor' 36 %}<h3>Hali hech narsa yuklanmagan</h3>
+        <p class="muted">Taqdimot (PDF yoki PowerPoint), video dars (MP4 yoki YouTube) va qo‘shimcha materiallarni yuklang —
+          ular mavzuda alohida slayd bo‘lib chiqadi.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+  <aside>
+    <form method="post" enctype="multipart/form-data" class="st-card sticky">
+      {% csrf_token %}
+      <h3>{% icon 'plus' 18 %} Yuklash</h3>
+      {% if res_form.non_field_errors %}<div class="msg error">{% icon 'info' 18 %}<span>{{ res_form.non_field_errors|join:' ' }}</span></div>{% endif %}
+      {% include 'lectures/studio/field.html' with f=res_form.kind %}
+      {% include 'lectures/studio/field.html' with f=res_form.title %}
+      {% include 'lectures/studio/field.html' with f=res_form.file %}
+      {% include 'lectures/studio/field.html' with f=res_form.url %}
+      {% include 'lectures/studio/field.html' with f=res_form.note %}
+      <button class="btn primary wide-btn">{% icon 'download' 18 %} Yuklash</button>
+      <p class="help"><b>Taqdimot:</b> PDF brauzerning o‘zida ochiladi, PPTX esa yuklab olinadi. <b>Video:</b> MP4 internetsiz ishlaydi, YouTube — internet bilan.</p>
+    </form>
+  </aside>
+</div>
+
+{% elif tab == 'savoljavob' %}
+<div class="st-grid">
+  <section>
+    <div class="st-list">
+      {% for x in qa %}
+      <div class="st-row">
+        <span class="st-num">{{ forloop.counter }}</span>
+        <a class="st-row-main" href="{% url 'studio:qa' course.slug t.number x.pk %}"><b>{{ x.question }}</b><small>{% icon 'check' 13 %} {{ x.answer|truncatechars:120 }}</small></a>
+        <div class="st-acts"><form method="post" action="{% url 'studio:qa_item_action' course.slug t.number x.pk 'delete' %}">{% csrf_token %}<button class="act danger" title="O‘chirish">{% icon 'close' 14 %}</button></form></div>
+      </div>
+      {% empty %}
+      <div class="st-empty">{% icon 'question' 36 %}<h3>Savol-javob yo‘q</h3><p class="muted">Qo‘lda qo‘shing yoki ma’ruza matnidan avtomatik yarating. Test savollarini bu yerga qo‘ymang — o‘quvchilar javobni oldindan bilib qoladi.</p>
+        <form method="post" action="{% url 'studio:qa_action' course.slug t.number 'from-text' %}">{% csrf_token %}<button class="btn ghost">{% icon 'sparkles' 18 %} Matndan yaratish</button></form></div>
+      {% endfor %}
+    </div>
+  </section>
+  <aside>
+    <form method="post" class="st-card sticky">
+      {% csrf_token %}
+      <h3>{% icon 'plus' 18 %} Yangi kartochka</h3>
+      {% include 'lectures/studio/field.html' with f=qa_form.question %}
+      {% include 'lectures/studio/field.html' with f=qa_form.answer %}
+      <button class="btn primary wide-btn">{% icon 'plus' 18 %} Qo‘shish</button>
+      <p class="help">O‘quvchi savolni o‘qiydi, javobni o‘ylaydi, keyin kartochkani bosib tekshiradi.</p>
+    </form>
+  </aside>
+</div>
+
+{% else %}
+<form method="post" class="st-card">
+  {% csrf_token %}
+  <div class="st-fields">
+    {% include 'lectures/studio/field.html' with f=extras.questions %}
+    {% include 'lectures/studio/field.html' with f=extras.prev_questions %}
+    {% include 'lectures/studio/field.html' with f=extras.self_study wide=True %}
+    {% include 'lectures/studio/field.html' with f=extras.literature wide=True %}
+  </div>
+  <button class="btn primary">{% icon 'check' 18 %} Saqlash</button>
+</form>
+{% endif %}
+{% endblock %}

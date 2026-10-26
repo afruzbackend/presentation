@@ -1,0 +1,16 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}{{ heading }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a>{% if t %}<i></i><a href="{% url 'studio:topic' course.slug t.number %}">{{ t.number }}-mavzu</a>{% endif %}<i></i><span>{{ heading }}</span>{% endblock %}
+{% block content %}
+<form method="post" class="st-card st-test-form">
+  {% csrf_token %}
+  <h3>{% icon 'pen' 18 %} {{ heading }}</h3>
+  {% for f in form %}{% include 'lectures/studio/field.html' with f=f %}{% endfor %}
+  <div class="btn-row">
+    <button class="btn primary">{% icon 'check' 18 %} Saqlash</button>
+    <a class="btn ghost" href="{{ cancel }}">Bekor qilish</a>
+    {% if can_delete %}<button class="btn ghost danger" name="delete" value="1" formnovalidate>{% icon 'close' 18 %} O‘chirish</button>{% endif %}
+  </div>
+</form>
+{% endblock %}

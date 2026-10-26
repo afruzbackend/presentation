@@ -1,0 +1,62 @@
+{% load static lecture_tags %}<!doctype html>
+<html lang="uz" data-theme="{{ theme }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Studiya{% endblock %} — Elektron darslik</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-32 -32 64 64'%3E%3Crect x='-21' y='-21' width='42' height='42' fill='%23C2562D'/%3E%3Crect x='-21' y='-21' width='42' height='42' fill='%23C2562D' transform='rotate(45)'/%3E%3Ccircle r='9' fill='%23F4EBDD'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'lectures/css/style.css' %}?v={{ v }}">
+  <link rel="stylesheet" href="{% static 'lectures/css/scenes.css' %}?v={{ v }}">
+  <link rel="stylesheet" href="{% static 'lectures/css/sections.css' %}?v={{ v }}">
+  <link rel="stylesheet" href="{% static 'lectures/css/studio.css' %}?v={{ v }}">
+</head>
+<body class="studio" data-view="studio">
+  <div class="bg" aria-hidden="true"><div class="pattern"></div></div>
+  <div class="band" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="{% url 'studio:dashboard' %}" title="Studiya">
+      <span class="brand-logo"><svg viewBox="-32 -32 64 64" width="42" height="42" aria-hidden="true"><g class="bl-star st-star"><rect x="-21" y="-21" width="42" height="42"/><rect x="-21" y="-21" width="42" height="42" transform="rotate(45)"/></g><g class="bl-in"><rect x="-11" y="-11" width="22" height="22"/><rect x="-11" y="-11" width="22" height="22" transform="rotate(45)"/></g><circle r="4"/></svg></span>
+      <span class="brand-text"><b>Studiya</b><small>Elektron darslik yaratish</small></span>
+    </a>
+    <nav class="crumbs">{% block crumbs %}{% endblock %}</nav>
+    <div class="top-actions">
+      <a class="st-top-link" href="{% url 'lectures:library' %}">{% icon 'book' 18 %} Kutubxona</a>
+      {% if user.is_authenticated %}
+      <a class="st-user" href="{% url 'studio:password' %}" title="Parolni o‘zgartirish">{% icon 'user' 16 %} {% firstof user.first_name user.username %}</a>
+      <form method="post" action="{% url 'studio:logout' %}">{% csrf_token %}<button class="icon-btn" title="Chiqish">{% icon 'arrowRight' %}</button></form>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="app st-app">
+    {% if messages %}<div class="msgs">{% for m in messages %}<div class="msg {{ m.tags }}">{% if m.tags == 'success' %}{% icon 'check' 18 %}{% else %}{% icon 'info' 18 %}{% endif %}<span>{{ m }}</span></div>{% endfor %}</div>{% endif %}
+
+    {% if course %}
+    <div class="st-course-head">
+      <div>
+        <small>Darslik</small>
+        <h1>{{ course.title }}</h1>
+      </div>
+      <div class="st-course-actions">
+        <a class="btn ghost sm" href="{% url 'lectures:course' course.slug %}" target="_blank">{% icon 'play' 16 %} Ko‘rish</a>
+        <a class="btn primary sm" href="{% url 'studio:export' course.slug %}">{% icon 'file' 16 %} Eksport (ZIP)</a>
+      </div>
+    </div>
+    <nav class="st-tabs">
+      <a href="{% url 'studio:course' course.slug %}" class="{% if tab == 'mavzular' %}on{% endif %}">{% icon 'list' 16 %} Mavzular</a>
+      <a href="{% url 'studio:parts' course.slug %}" class="{% if tab == 'bolimlar' %}on{% endif %}">{% icon 'layers' 16 %} Bo‘limlar</a>
+      <a href="{% url 'studio:materials' course.slug %}" class="{% if tab == 'materiallar' %}on{% endif %}">{% icon 'file' 16 %} Materiallar va texnologiyalar</a>
+      <a href="{% url 'studio:glossary' course.slug %}" class="{% if tab == 'glossariy' %}on{% endif %}">{% icon 'abc' 16 %} Glossariy</a>
+      <a href="{% url 'studio:settings' course.slug %}" class="{% if tab == 'sozlamalar' %}on{% endif %}">{% icon 'pen' 16 %} Darslik ma’lumotlari</a>
+      <a href="{% url 'studio:export' course.slug %}" class="{% if tab == 'eksport' %}on{% endif %}">{% icon 'file' 16 %} Eksport</a>
+    </nav>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

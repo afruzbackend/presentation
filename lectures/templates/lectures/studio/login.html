@@ -1,0 +1,19 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Kirish{% endblock %}
+{% block content %}
+<div class="st-auth">
+  <div class="st-auth-arch" aria-hidden="true">{% icon 'pen' 46 %}</div>
+  <h1>Studiyaga kirish</h1>
+  <p class="muted">Darsliklarni yaratish va tahrirlash uchun login va parolingizni kiriting.</p>
+  <form method="post" class="st-card">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="msg error">{% icon 'info' 18 %}<span>Login yoki parol noto‘g‘ri.</span></div>{% endif %}
+    {% include 'lectures/studio/field.html' with f=form.username %}
+    {% include 'lectures/studio/field.html' with f=form.password %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn primary wide-btn">{% icon 'arrowRight' 18 %} Kirish</button>
+  </form>
+  <a class="link" href="{% url 'lectures:library' %}">← Darsliklar kutubxonasiga qaytish</a>
+</div>
+{% endblock %}

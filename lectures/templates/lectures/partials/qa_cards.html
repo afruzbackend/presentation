@@ -1,0 +1,9 @@
+{% load lecture_tags %}{# Kartochka: bosilganda javob ochiladi (<details> — JavaScript'siz) #}
+<div class="qa-grid">
+  {% for x in items %}
+  <details class="qa-card">
+    <summary><span class="qa-n">{{ forloop.counter }}</span><span class="qa-q">{{ x.question }}</span><span class="qa-hint">{% icon 'chevronDown' 16 %} Javobni ko‘rish</span></summary>
+    <div class="qa-a">{% icon 'check' 18 %}<span>{{ x.answer }}</span></div>
+  </details>
+  {% endfor %}
+</div>

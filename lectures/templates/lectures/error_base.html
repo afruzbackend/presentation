@@ -1,0 +1,45 @@
+{% load static lecture_tags %}<!doctype html>
+<html lang="uz" data-theme="{{ theme|default:'light' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ code }} — {% block title %}Xatolik{% endblock %} · Elektron darslik</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-32 -32 64 64'%3E%3Crect x='-21' y='-21' width='42' height='42' fill='%23C2562D'/%3E%3Crect x='-21' y='-21' width='42' height='42' fill='%23C2562D' transform='rotate(45)'/%3E%3Ccircle r='9' fill='%23F4EBDD'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,700;6..12,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'lectures/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'lectures/css/errors.css' %}">
+</head>
+<body class="err-page">
+  <div class="bg" aria-hidden="true"><div class="pattern"></div></div>
+  <div class="band" aria-hidden="true"></div>
+
+  <main class="err">
+    {# Raqam ravoq ichida; "0" o'rnida aylanuvchi girih yulduzi #}
+    <div class="err-arch" aria-hidden="true">
+      <div class="err-code">
+        {% for ch in code %}{% if ch == '0' %}<span class="err-zero"><svg viewBox="-60 -60 120 120">
+          <g class="z-out"><rect x="-42" y="-42" width="84" height="84"/><rect x="-42" y="-42" width="84" height="84" transform="rotate(45)"/></g>
+          <g class="z-in"><rect x="-24" y="-24" width="48" height="48"/><rect x="-24" y="-24" width="48" height="48" transform="rotate(45)"/></g>
+          <circle r="9"/></svg></span>{% else %}<span class="err-digit">{{ ch }}</span>{% endif %}{% endfor %}
+      </div>
+      <div class="err-fall">{% for i in "12345678" %}<i style="--i:{{ i }}"></i>{% endfor %}</div>
+    </div>
+
+    <div class="eyebrow"><span class="dot"></span>Xato {{ code }}</div>
+    <h1>{% block heading %}Nimadir noto‘g‘ri ketdi{% endblock %}</h1>
+    <p class="err-lead">{% block message %}{% endblock %}</p>
+    {% block path %}{% if path %}<p class="err-path">Manzil: <code>{{ path }}</code></p>{% endif %}{% endblock %}
+
+    <div class="btn-row err-actions">
+      <a class="btn ghost" href="{{ back }}">{% icon 'arrowLeft' 18 %} Orqaga</a>
+      <a class="btn primary" href="{% url 'lectures:library' %}">{% icon 'home' 18 %} Kutubxona</a>
+      {% block actions %}{% endblock %}
+    </div>
+    {% block extra %}{% endblock %}
+  </main>
+
+  <footer class="err-foot">Elektron darslik · yaratish va ko‘rish dasturi</footer>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Zaxira nusxa{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><span>Zaxira nusxa</span>{% endblock %}
+{% block content %}
+<div class="st-grid">
+  <section class="st-card st-export">
+    <div class="st-export-ic">{% icon 'download' 40 %}</div>
+    <h2>Zaxira nusxa</h2>
+    <p>Barcha darsliklar — mavzular, testlar, savol-javoblar, glossariy, rasmlar va yuklangan fayllar — bitta
+      <b>ZIP</b> faylga yig‘iladi. Uni fleshkaga yoki bulutga saqlab qo‘ying: kompyuter buzilsa yoki dastur qayta
+      o‘rnatilsa, darsliklarni shu fayldan to‘liq tiklaysiz.</p>
+    <form method="post">{% csrf_token %}
+      <button class="btn primary" name="download" value="1">{% icon 'download' 18 %} Zaxira nusxani yuklab olish</button>
+    </form>
+
+    <h3 class="st-sub">Fayldan tiklash</h3>
+    <form method="post" enctype="multipart/form-data" class="st-restore">{% csrf_token %}
+      <div class="field{% if error %} has-error{% endif %}">
+        <label for="bk-file">Zaxira fayli (.zip)</label>
+        <input id="bk-file" type="file" name="file" accept=".zip,application/zip" required>
+        {% if error %}<small class="err">{{ error }}</small>{% endif %}
+      </div>
+      <label class="st-agree"><input type="checkbox" name="agree" value="1" required>
+        <span>Hozirgi darsliklar o‘chirilib, fayldagilar bilan <b>almashtirilishini</b> tushunaman.</span></label>
+      <button class="btn ghost danger">{% icon 'refresh' 18 %} Tiklash</button>
+      <p class="help">Tiklashdan oldin joriy holat ham avtomatik zaxiraga yoziladi — xato fayl tanlansa, ortga qaytish mumkin.
+        Login va parol o‘zgarmaydi.</p>
+    </form>
+  </section>
+  <aside class="st-card st-howto">
+    <h3>{% icon 'info' 18 %} Avtomatik nusxalar</h3>
+    <p>Dastur har safar ishga tushganda nusxa oladi va oxirgi 10 tasini saqlaydi:</p>
+    <pre>{{ folder }}</pre>
+    {% if autos %}
+    <ul class="st-autos">
+      {% for a in autos %}<li><span>{{ a.name|slice:"15:" }}</span><small>{{ a.size|filesizeformat }}</small></li>{% endfor %}
+    </ul>
+    {% else %}<p class="help">Hali avtomatik nusxa yo‘q — dasturni keyingi ishga tushirishda paydo bo‘ladi.</p>{% endif %}
+    <p class="help">Avtomatik nusxadan tiklash uchun shu papkadagi faylni chap tomondagi «Fayldan tiklash» orqali tanlang.</p>
+  </aside>
+</div>
+{% endblock %}

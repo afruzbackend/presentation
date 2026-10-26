@@ -1,0 +1,46 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Materiallar — {{ course.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><span>Materiallar</span>{% endblock %}
+{% block content %}
+<div class="st-grid">
+  <section>
+    <h2 class="st-h2">Umumiy materiallar <small>butun darslik uchun</small></h2>
+    <p class="muted">Bu yerga butun fan bo‘yicha hujjatlar yuklanadi: <b>fanning ta’lim texnologiyasi</b> (o‘quv-uslubiy majmua, ishchi dastur),
+      umumiy taqdimot yoki video. Mavzuga tegishli fayllarni mavzu sahifasidagi «Taqdimot, video, materiallar» bo‘limida yuklang.</p>
+    <div class="st-list">
+      {% for x in items %}
+      <div class="st-row res-row k-{{ x.kind }}">
+        <span class="st-num">{% if x.kind == 'video' %}{% icon 'video' 18 %}{% elif x.kind == 'slides' %}{% icon 'monitor' 18 %}{% elif x.kind == 'tech' %}{% icon 'layers' 18 %}{% else %}{% icon 'file' 18 %}{% endif %}</span>
+        <a class="st-row-main" href="{% url 'studio:resource' course.slug x.pk %}"><b>{{ x.title }}</b><small>{{ x.get_kind_display }}{% if x.file %} · {{ x.ext|upper }} · {{ x.file_size|filesizeformat }}{% endif %}{% if x.url %} · {% if x.url|youtube %}YouTube{% else %}havola{% endif %}{% endif %}</small></a>
+        <div class="st-acts">
+          {% if x.file %}<a class="act" href="{{ x.file.url }}" target="_blank">{% icon 'download' 14 %}</a>{% endif %}
+          <a class="act" href="{% url 'studio:resource' course.slug x.pk %}" title="Tahrirlash">{% icon 'pen' 14 %}</a>
+          <form method="post" action="{% url 'studio:resource_delete' course.slug x.pk %}">{% csrf_token %}<button class="act danger" title="O‘chirish">{% icon 'close' 14 %}</button></form>
+        </div>
+      </div>
+      {% empty %}<div class="st-empty">{% icon 'file' 36 %}<h3>Umumiy material yo‘q</h3></div>
+      {% endfor %}
+    </div>
+
+    {% if topic_items %}
+    <h2 class="st-h2" style="margin-top:30px">Mavzulardagi fayllar <small>{{ topic_items|length }} ta</small></h2>
+    <div class="st-list">
+      {% for x in topic_items %}
+      <div class="st-row"><span class="st-num">{{ x.topic.number }}</span>
+        <a class="st-row-main" href="{% url 'studio:topic' course.slug x.topic.number %}?tab=resurslar"><b>{{ x.title }}</b><small>{{ x.get_kind_display }} · {{ x.topic.title }}</small></a></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+  <aside>
+    <form method="post" enctype="multipart/form-data" class="st-card sticky">
+      {% csrf_token %}
+      <h3>{% icon 'plus' 18 %} Yuklash</h3>
+      {% if form.non_field_errors %}<div class="msg error">{% icon 'info' 18 %}<span>{{ form.non_field_errors|join:' ' }}</span></div>{% endif %}
+      {% for f in form %}{% include 'lectures/studio/field.html' with f=f %}{% endfor %}
+      <button class="btn primary wide-btn">{% icon 'download' 18 %} Yuklash</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}

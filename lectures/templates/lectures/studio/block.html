@@ -1,0 +1,65 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}{{ bname }} — {{ sec.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:topic' course.slug t.number %}?tab=reja">{{ t.number }}-mavzu</a><i></i><a href="{% url 'studio:section' course.slug t.number sec.pk %}">{{ sec.title|truncatewords:5 }}</a><i></i><span>{{ bname }}</span>{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="st-grid">
+  {% csrf_token %}
+  {{ form.t }}
+  <input type="hidden" name="pos" value="{{ pos }}">
+  <section class="st-card">
+    <h3>{% if is_new %}{% icon 'plus' 18 %} Yangi blok: {{ bname }}{% else %}{% icon 'pen' 18 %} {{ bname }}ni tahrirlash{% endif %}</h3>
+    {% if form.non_field_errors %}<div class="msg error">{% icon 'info' 18 %}<span>{{ form.non_field_errors|join:' ' }}</span></div>{% endif %}
+
+    {% if btype == 'h' %}
+      <div class="field{% if form.text.errors %} has-error{% endif %}"><label for="id_text">Sarlavha matni</label>
+        <input type="text" name="text" id="id_text" value="{{ form.text.value|default:'' }}" autofocus>
+        {% for e in form.text.errors %}<small class="err">{{ e }}</small>{% endfor %}</div>
+    {% elif btype in 'p,note' %}
+      {% include 'lectures/studio/field.html' with f=form.text %}
+    {% elif btype == 'ul' %}
+      {% include 'lectures/studio/field.html' with f=form.text %}
+    {% elif btype == 'table' %}
+      {% include 'lectures/studio/field.html' with f=form.text %}
+    {% elif btype == 'image' %}
+      {% if old.src %}<div class="st-current"><img src="{{ old.src|media }}" alt=""><small>Hozirgi rasm. Yangisini tanlasangiz, almashtiriladi.</small></div>{% endif %}
+      {% include 'lectures/studio/field.html' with f=form.file %}
+      {% include 'lectures/studio/field.html' with f=form.caption %}
+    {% elif btype == 'video' %}
+      {% if old.src %}<div class="st-current"><video src="{{ old.src|media }}" controls></video></div>{% endif %}
+      {% include 'lectures/studio/field.html' with f=form.file %}
+      {% include 'lectures/studio/field.html' with f=form.url %}
+      {% include 'lectures/studio/field.html' with f=form.caption %}
+    {% endif %}
+
+    <div class="btn-row">
+      <button class="btn primary">{% icon 'check' 18 %} Saqlash</button>
+      <a class="btn ghost" href="{% url 'studio:section' course.slug t.number sec.pk %}">Bekor qilish</a>
+    </div>
+  </section>
+
+  <aside class="st-card st-howto">
+    <h3>{% icon 'info' 18 %} Qanday yoziladi?</h3>
+    {% if btype == 'p' or btype == 'note' %}
+      <p>Oddiy matn yozing. So‘zni <b>qalin</b> qilish uchun ikki yulduzcha ichiga oling:</p>
+      <pre>**Protsessor** — kompyuterning «miyasi».</pre>
+      {% if btype == 'note' %}<p>Eslatma slaydning o‘ng tomonida rangli quti bo‘lib chiqadi.</p>{% else %}<p>Bo‘limdagi birinchi matn slaydda qisqa bayon sifatida chiqadi.</p>{% endif %}
+    {% elif btype == 'ul' %}
+      <p>Har bir band — alohida qatorda. «Kalit: izoh» ko‘rinishida yozsangiz, slaydda chiroyli kartochka bo‘ladi:</p>
+      <pre>Elektr xavfi: 220 V rozetkalar, ochiq korpus.
+Yong‘in xavfi: qizib ketgan quvvat bloki.</pre>
+    {% elif btype == 'table' %}
+      <p>Har bir qator — jadval qatori. Kataklarni <b>|</b> belgisi bilan ajrating. Birinchi qator — sarlavha:</p>
+      <pre>Qurilma | Vazifasi
+Protsessor | Hisoblash
+SSD | Ma’lumot saqlash</pre>
+    {% elif btype == 'image' %}
+      <p>JPG, PNG, WEBP yoki SVG rasm tanlang. Rasm darslik bilan birga eksport qilinadi va internetsiz ochiladi.</p>
+    {% elif btype == 'video' %}
+      <p><b>MP4 fayl</b> yuklasangiz — internetsiz ishlaydi. <b>YouTube havolasi</b> esa faqat internet bo‘lganda ochiladi.</p>
+    {% else %}
+      <p>Sarlavha bo‘limni qismlarga ajratadi va slaydda «Bo‘lim tarkibi» ro‘yxatida chiqadi.</p>
+    {% endif %}
+  </aside>
+</form>
+{% endblock %}

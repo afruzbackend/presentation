@@ -1,0 +1,32 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block title %}O‘quv-tematik reja — {{ course.title }}{% endblock %}
+{% block view %}reja{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>O‘quv-tematik reja</span>{% endblock %}
+{% block content %}
+<section class="view plan">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>O‘quv-tematik reja</div>
+    <h1>Mavzular va soatlar</h1><p class="muted">Jami {{ total_hours }} soat: nazariy — {{ theory }}, amaliy — {{ practice }}{% if self_hours %}, mustaqil ta’lim — {{ self_hours }}{% endif %}</p></div></div>
+  <div class="plan-top">
+    <div class="donut glass rv" style="{{ 0|delay }}">
+      <div class="donut-ring" style="--a:{{ a }}%;--b:{{ b }}%"><b>{{ total_hours }}</b><small>soat</small></div>
+      <ul><li><i></i>Nazariy — {{ theory }} soat</li><li><i></i>Amaliy — {{ practice }} soat</li>{% if self_hours %}<li><i></i>Mustaqil ta’lim — {{ self_hours }} soat</li>{% endif %}</ul>
+    </div>
+    <div class="glass info-card rv" style="{{ 1|delay }}">
+      {% if course.module %}<p><b>Modul:</b> {{ course.module }}</p>{% endif %}
+      {% if course.direction %}<p><b>Yo‘nalish:</b> {{ course.direction }}</p>{% endif %}
+      <p><b>Mavzular:</b> {{ rows|length }} ta</p>
+      {% if course.college %}<p><b>Muassasa:</b> {{ course.college }}</p>{% endif %}
+      <p><b>Tayyorladi:</b> {{ course.author }}</p>
+    </div>
+  </div>
+  <div class="tbl-wrap plan-table rv" style="{{ 2|delay }}"><table>
+    <thead><tr><th>№</th><th>Mavzu nomi</th><th>Turi</th><th>Soat</th><th></th></tr></thead>
+    <tbody>{% for t in rows %}<tr style="--g:{{ t.color }}">
+      <td><b class="num">{{ t.number }}</b></td><td><a class="row-link" href="{% url 'lectures:slide' course.slug t.number 0 %}">{{ t.title }}</a></td>
+      <td><span class="badge {% if t.kind == 'Nazariy' %}nz{% else %}am{% endif %}">{{ t.kind }}</span></td><td>{{ t.hours }}</td><td>{% icon 'arrowRight' 16 %}</td></tr>{% endfor %}</tbody>
+    <tfoot><tr><td></td><td>Jami auditoriya soati</td><td></td><td>{{ class_hours }}</td><td></td></tr></tfoot>
+  </table></div>
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

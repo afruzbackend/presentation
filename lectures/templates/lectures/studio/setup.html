@@ -1,0 +1,19 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Birinchi sozlash{% endblock %}
+{% block content %}
+<div class="st-auth">
+  <div class="st-auth-arch" aria-hidden="true">{% icon 'sparkles' 46 %}</div>
+  <h1>Xush kelibsiz!</h1>
+  <p class="muted">Dastur birinchi marta ishga tushirildi. Studiyaga kirish uchun o‘zingizga login va parol yarating —
+    keyingi safar shu bilan kirasiz.</p>
+  <form method="post" class="st-card">
+    {% csrf_token %}
+    {% include 'lectures/studio/field.html' with f=form.name %}
+    {% include 'lectures/studio/field.html' with f=form.username %}
+    {% include 'lectures/studio/field.html' with f=form.password %}
+    {% include 'lectures/studio/field.html' with f=form.password2 %}
+    <button class="btn primary wide-btn">{% icon 'check' 18 %} Akkaunt yaratish</button>
+  </form>
+</div>
+{% endblock %}

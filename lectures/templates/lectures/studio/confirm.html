@@ -1,0 +1,15 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}O‘chirishni tasdiqlash{% endblock %}
+{% block content %}
+<form method="post" class="st-auth">
+  {% csrf_token %}
+  <div class="st-auth-arch danger" aria-hidden="true">{% icon 'alert' 46 %}</div>
+  <h1>Rostdan ham o‘chirasizmi?</h1>
+  <p class="err-lead">{{ what }} o‘chirmoqchisiz. {{ detail }} <b>Bu amalni qaytarib bo‘lmaydi.</b></p>
+  <div class="btn-row center-row">
+    <a class="btn primary" href="{{ cancel }}">{% icon 'arrowLeft' 18 %} Yo‘q, qaytish</a>
+    <button class="btn ghost danger">{% icon 'close' 18 %} Ha, o‘chirish</button>
+  </div>
+</form>
+{% endblock %}

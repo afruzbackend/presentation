@@ -1,0 +1,8 @@
+{% load lecture_tags %}{% for b in blocks %}{% if b.t == 'h' %}<h4 id="{{ prefix }}-{{ forloop.counter0 }}">{{ b.text }}</h4>
+{% elif b.t == 'p' %}<p>{{ b.html|safe }}</p>
+{% elif b.t == 'ul' %}<ul>{% for x in b.items %}<li>{{ x|safe }}</li>{% endfor %}</ul>
+{% elif b.t == 'table' %}{% include 'lectures/partials/table.html' with rows=b.rows cls='' %}
+{% elif b.t == 'image' %}<figure class="figure"><img src="{{ b.src|media }}" alt="{{ b.caption }}" loading="lazy">{% if b.caption %}<figcaption>{{ b.caption }}</figcaption>{% endif %}</figure>
+{% elif b.t == 'video' %}<figure class="figure video">{% if b.src %}<video src="{{ b.src|media }}" controls preload="metadata"></video>{% elif b.url|youtube %}{% yt_player b.url b.caption %}{% endif %}{% if b.caption %}<figcaption>{{ b.caption }}</figcaption>{% endif %}</figure>
+{% elif b.t == 'note' %}<div class="note-box">{% icon 'info' 18 %}<div>{{ b.html|safe }}</div></div>
+{% endif %}{% endfor %}

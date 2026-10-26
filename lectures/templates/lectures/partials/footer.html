@@ -1,0 +1,9 @@
+<footer class="foot">
+  {% if course %}
+  <div><b>{% firstof course.module course.title %}</b>{% if course.direction %} · {{ course.direction }}{% endif %}</div>
+  <div>Tayyorladi: <b>{{ course.author }}</b>{% if course.college %} · {{ course.college }}{% endif %} · {{ course.updated|date:"Y" }}</div>
+  {% else %}
+  <div><b>Elektron darslik</b> · yaratish va ko‘rish dasturi</div>
+  <div>Django asosida · <a href="{% url 'lectures:api-root' %}">REST API</a></div>
+  {% endif %}
+</footer>

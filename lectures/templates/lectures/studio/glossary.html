@@ -1,0 +1,39 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Glossariy — {{ course.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><span>Glossariy</span>{% endblock %}
+{% block content %}
+<div class="st-grid">
+  <section>
+    <div class="st-head small">
+      <h2 class="st-h2" style="margin:0">Atamalar <small>{{ terms|length }} ta</small></h2>
+      <form method="get" class="search">{% icon 'search' 18 %}<input name="q" value="{{ q }}" placeholder="Qidirish…"></form>
+    </div>
+    <div class="st-list">
+      {% for g in terms %}
+      <div class="st-row">
+        <a class="st-row-main" href="{% url 'studio:term' course.slug g.pk %}"><b>{{ g.term }}</b><small>{{ g.definition|truncatechars:140 }}{% if g.topic %} · {{ g.topic.number }}-mavzu{% endif %}</small></a>
+        <div class="st-acts"><a class="act" href="{% url 'studio:term' course.slug g.pk %}" title="Tahrirlash">{% icon 'pen' 14 %}</a></div>
+      </div>
+      {% empty %}<div class="st-empty">{% icon 'abc' 36 %}<h3>Atama yo‘q</h3></div>
+      {% endfor %}
+    </div>
+  </section>
+  <aside>
+    <form method="post" class="st-card">
+      {% csrf_token %}
+      <h3>{% icon 'plus' 18 %} Yangi atama</h3>
+      {% include 'lectures/studio/field.html' with f=form.term %}
+      {% include 'lectures/studio/field.html' with f=form.definition %}
+      {% include 'lectures/studio/field.html' with f=form.topic %}
+      <button class="btn primary wide-btn">{% icon 'plus' 18 %} Qo‘shish</button>
+    </form>
+    <form method="post" class="st-card st-auto">
+      {% csrf_token %}
+      <h3>{% icon 'sparkles' 18 %} Avtomatik topish</h3>
+      <p class="help">Ma’ruza matnidagi «<b>Atama</b> — ta’rif» ko‘rinishidagi jumlalar va «<b>Atama:</b> izoh» bandlaridan yangi atamalar qo‘shiladi. Borlari o‘zgarmaydi.</p>
+      <button class="btn ghost wide-btn" name="auto" value="1">{% icon 'sparkles' 18 %} Matndan topish</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}

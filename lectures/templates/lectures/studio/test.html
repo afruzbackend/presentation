@@ -1,0 +1,26 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Test savoli — {{ t.number }}-mavzu{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><a href="{% url 'studio:topic' course.slug t.number %}?tab=test">{{ t.number }}-mavzu testlari</a><i></i><span>{% if q %}Tahrirlash{% else %}Yangi savol{% endif %}</span>{% endblock %}
+{% block content %}
+<form method="post" class="st-card st-test-form">
+  {% csrf_token %}
+  <h3>{% icon 'test' 18 %} {% if q %}Savolni tahrirlash{% else %}Yangi test savoli{% endif %}</h3>
+  {% include 'lectures/studio/field.html' with f=form.text %}
+  <div class="st-opts-edit">
+    {% for letter, idx, f in opt_rows %}
+    <div class="st-opt-row">
+      <label class="st-correct" title="{{ letter }} — to‘g‘ri javob"><input type="radio" name="answer" value="{{ idx }}" {% if answer == idx %}checked{% endif %}><span>✓</span></label>
+      {% include 'lectures/studio/field.html' with f=f %}
+    </div>
+    {% endfor %}
+  </div>
+  {% for e in form.answer.errors %}<small class="err">{{ e }}</small>{% endfor %}
+  <p class="help">Chapdagi ✓ belgisi bilan to‘g‘ri javobni belgilang. C va D variantlari ixtiyoriy.</p>
+  <div class="btn-row">
+    <button class="btn primary">{% icon 'check' 18 %} Saqlash</button>
+    {% if not q %}<button class="btn ghost" name="again" value="1">{% icon 'plus' 18 %} Saqlash va yana qo‘shish</button>{% endif %}
+    <a class="btn ghost" href="{% url 'studio:topic' course.slug t.number %}?tab=test">Bekor qilish</a>
+  </div>
+</form>
+{% endblock %}

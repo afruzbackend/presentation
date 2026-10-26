@@ -1,0 +1,58 @@
+/* ===================== Xato sahifalari (404, 500, 403, 400) ===================== */
+.err-page { display: flex; flex-direction: column; min-height: 100vh; }
+.err { flex: 1; width: min(760px, 100%); margin: 0 auto; padding: 64px 20px 40px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+/* raqam — ravoq (mehrob) ichida */
+.err-arch {
+  position: relative; width: min(520px, 100%); padding: 70px 30px 34px; margin-bottom: 28px;
+  border-radius: 999px 999px var(--r) var(--r); border: 1.5px solid var(--line2); background: var(--paper2);
+  box-shadow: inset 0 0 0 10px var(--paper), inset 0 0 0 12px var(--terra), 0 24px 50px -24px rgba(27, 42, 74, .45);
+  animation: rv .7s cubic-bezier(.2, .8, .2, 1) backwards;
+}
+.err-arch::before { content: ""; position: absolute; left: 50%; top: 26px; width: 26px; height: 26px; margin-left: -13px; background: var(--firuza); clip-path: var(--star); animation: spin 12s linear infinite; }
+.err-code { display: flex; justify-content: center; align-items: center; gap: 4px; }
+.err-digit {
+  font: 700 clamp(110px, 20vw, 190px)/.9 var(--serif); color: var(--ink);
+  text-shadow: 6px 6px 0 var(--oltin); animation: digitIn .9s cubic-bezier(.2, .8, .2, 1) backwards;
+}
+.err-digit:last-child { animation-delay: .15s; }
+@keyframes digitIn { from { opacity: 0; transform: translateY(-60px) rotate(-8deg); } }
+.err-zero { width: clamp(110px, 19vw, 180px); aspect-ratio: 1; display: block; animation: starIn 1s cubic-bezier(.2, .8, .2, 1) backwards .1s; }
+.err-zero svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.err-zero .z-out { fill: var(--terra); transform-origin: 0 0; animation: spin 18s linear infinite; }
+.err-zero .z-in { fill: none; stroke: var(--on); stroke-width: 4; transform-origin: 0 0; animation: spin 9s linear infinite reverse; }
+.err-zero circle { fill: var(--oltin); }
+.err-code .err-zero + .err-zero .z-out { fill: var(--firuza); animation-direction: reverse; }
+
+/* ravoqdan uchib tushayotgan koshin parchalari */
+.err-fall { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
+.err-fall i {
+  position: absolute; top: -20px; left: calc(var(--i) * 11%); width: 14px; height: 14px; clip-path: var(--star);
+  background: var(--terra); opacity: 0; animation: tileFall 5s ease-in infinite; animation-delay: calc(var(--i) * .6s);
+}
+.err-fall i:nth-child(2n) { background: var(--firuza); width: 10px; height: 10px; }
+.err-fall i:nth-child(3n) { background: var(--oltin); }
+@keyframes tileFall { 10% { opacity: .9; } 100% { transform: translateY(420px) rotate(320deg); opacity: 0; } }
+
+.err h1 { font-size: clamp(32px, 4.4vw, 50px); margin-bottom: 12px; animation: rv .7s .15s backwards; }
+.err .eyebrow { animation: rv .7s .1s backwards; }
+.err-lead { font-size: 19px; color: var(--ink2); max-width: 600px; margin: 0 0 10px; animation: rv .7s .2s backwards; }
+.err-path { color: var(--muted); font-size: 15px; margin: 4px 0 0; word-break: break-all; }
+.err-actions { justify-content: center; animation: rv .7s .25s backwards; }
+
+.err-search { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 560px; margin-top: 34px; padding: 6px 6px 6px 16px;
+  background: var(--card); border: 1.5px solid var(--ink); border-radius: var(--r); box-shadow: 4px 4px 0 var(--ink); color: var(--muted); animation: rv .7s .3s backwards; }
+.err-search:focus-within { border-color: var(--terra); box-shadow: 4px 4px 0 var(--terra); }
+.err-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; color: var(--ink); font: 600 16px var(--sans); padding: 8px 0; }
+.err-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; animation: rv .7s .35s backwards; }
+.err-links a { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 3px; border: 1.5px solid var(--line2); font-weight: 700; font-size: 14px; background: var(--card); transition: .2s; }
+.err-links a .ic { color: var(--firuza); }
+.err-links a:hover { border-color: var(--terra); color: var(--terra); transform: translateY(-2px); }
+
+.err-foot { text-align: center; padding: 18px 16px 24px; color: var(--muted); font-size: 13.5px; font-weight: 600; border-top: 1.5px solid var(--line2); }
+
+@media (max-width: 560px) {
+  .err { padding-top: 40px; }
+  .err-arch { padding: 60px 14px 26px; }
+  .err-search { flex-wrap: wrap; }
+}

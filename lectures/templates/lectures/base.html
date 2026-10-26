@@ -1,0 +1,75 @@
+{% load static lecture_tags %}<!doctype html>
+<html lang="uz" data-theme="{{ theme }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% if course %}{{ course.title }} — elektron darslik{% else %}Elektron darsliklar{% endif %}{% endblock %}</title>
+  <meta name="description" content="{% if course %}{{ course.title }}: elektron darslik. Muallif: {{ course.author }}.{% else %}Elektron darsliklar yaratish va ko‘rish dasturi.{% endif %}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-32 -32 64 64'%3E%3Crect x='-21' y='-21' width='42' height='42' fill='%230E7C7B'/%3E%3Crect x='-21' y='-21' width='42' height='42' fill='%230E7C7B' transform='rotate(45)'/%3E%3Ccircle r='9' fill='%23F4EBDD'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'lectures/css/style.css' %}?v={{ v }}">
+  <link rel="stylesheet" href="{% static 'lectures/css/scenes.css' %}?v={{ v }}">
+  <link rel="stylesheet" href="{% static 'lectures/css/sections.css' %}?v={{ v }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body data-view="{% block view %}home{% endblock %}" {% block body_attrs %}{% endblock %}>
+  <div class="bg" aria-hidden="true"><div class="pattern"></div></div>
+  <div class="band" aria-hidden="true"></div>
+  <div class="progress" style="width:{% block progress %}0{% endblock %}%"></div>
+
+  <header class="topbar">
+    <a class="brand" href="{% if course %}{% url 'lectures:course' course.slug %}{% else %}{% url 'lectures:library' %}{% endif %}" title="Bosh sahifa">
+      <span class="brand-logo"><svg viewBox="-32 -32 64 64" width="42" height="42" aria-hidden="true"><g class="bl-star"><rect x="-21" y="-21" width="42" height="42"/><rect x="-21" y="-21" width="42" height="42" transform="rotate(45)"/></g><g class="bl-in"><rect x="-11" y="-11" width="22" height="22"/><rect x="-11" y="-11" width="22" height="22" transform="rotate(45)"/></g><circle r="4"/></svg></span>
+      <span class="brand-text">{% if course %}<b>{{ course.title }}</b><small>Elektron darslik · {{ all_topics|length }} mavzu</small>{% else %}<b>Elektron darslik</b><small>Yaratish va ko‘rish dasturi</small>{% endif %}</span>
+    </a>
+    <nav class="crumbs">{% block crumbs %}<span>Bosh sahifa</span>{% endblock %}</nav>
+    <div class="top-actions">
+      {% if course %}<a class="icon-btn" href="#jumper" title="Mavzu qidirish">{% icon 'search' %}</a>{% endif %}
+      {% if not exporting %}
+      <a class="icon-btn" href="{% url 'lectures:theme' %}?next={{ request.get_full_path|urlencode }}" title="Yorug‘ / tungi rejim">{% if theme == 'dark' %}{% icon 'sun' %}{% else %}{% icon 'moon' %}{% endif %}</a>
+      <a class="icon-btn studio-link" href="{% if course %}{% url 'studio:course' course.slug %}{% else %}{% url 'studio:dashboard' %}{% endif %}" title="Studiya — darslikni tahrirlash">{% icon 'pen' %}</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="app">
+    {% if messages and not exporting %}<div class="msgs view-msgs">{% for m in messages %}<div class="msg {{ m.tags }}">{% icon 'info' 18 %}<span>{{ m }}</span></div>{% endfor %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {# "Orqaga" — chap pastki burchakda doim ko'rinib turadi #}
+  {% block backbtn %}<a class="back-btn" href="{% block back %}{% if course %}{% url 'lectures:course' course.slug %}{% else %}{% url 'lectures:library' %}{% endif %}{% endblock %}" title="Orqaga (Backspace)" data-back>{% icon 'arrowLeft' 20 %}<span>Orqaga</span></a>{% endblock %}
+
+  {# "Tahrirlash" — faqat Studiyaga kirgan ustozga ko'rinadi: shu sahifaning muharririni ochadi #}
+  {% if user.is_authenticated and not exporting %}{% block editbtn %}<a class="edit-btn" href="{% block edit %}{% if course %}{% url 'studio:course' course.slug %}{% else %}{% url 'studio:dashboard' %}{% endif %}{% endblock %}" title="Shu sahifani Studiyada tahrirlash">{% icon 'pen' 20 %}<span>Tahrirlash</span></a>{% endblock %}{% endif %}
+
+  {% block dock %}{% endblock %}
+  {% block drawers %}{% endblock %}
+
+  {% if course %}
+  <!-- Barcha mavzular oynasi (#jumper) -->
+  <div class="jumper" id="jumper">
+    <a class="overlay-close" href="#yopish" aria-label="Yopish"></a>
+    <div class="jumper-panel">
+      <form class="jumper-head" action="{% url 'lectures:contents' course.slug %}" method="get">
+        {% icon 'search' 18 %}
+        {% if exporting %}<span class="jumper-title">Barcha mavzular</span>{% else %}<input name="q" type="text" placeholder="Mavzu nomi yoki raqamini yozing va Enter bosing…" autocomplete="off">{% endif %}
+        <a href="#yopish"><kbd>Yopish</kbd></a>
+      </form>
+      <div class="jumper-grid">
+        {% for t in all_topics %}<a class="jg" href="{% url 'lectures:slide' course.slug t.number 0 %}" style="--g:{{ t.color }}" title="{{ t.title }}">{{ t.number }}</a>{% endfor %}
+      </div>
+      <div class="jumper-list">
+        {% for t in all_topics %}<a class="jl" href="{% url 'lectures:slide' course.slug t.number 0 %}"><b style="--g:{{ t.color }}">{{ t.number|pad2 }}</b><span>{{ t.title }}<small>{{ t.kind }}{% if t.part %} · {{ t.part.name }}{% endif %}</small></span>{% icon 'arrowRight' 16 %}</a>{% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {# Ixtiyoriy: klaviatura (← →) va 3D egilish. JS o'chirilsa ham sayt to'liq ishlaydi. #}
+  <script src="{% static 'lectures/js/ui.js' %}?v={{ v }}" defer></script>
+  {% if exporting %}<script src="{% static 'lectures/js/offline.js' %}?v={{ v }}" defer></script>{% endif %}
+</body>
+</html>

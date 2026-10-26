@@ -1,0 +1,7 @@
+{# Bitta forma maydoni: yorliq, kiritish, yordam matni va xatolar #}
+<div class="field{% if f.errors %} has-error{% endif %}{% if wide %} wide{% endif %}">
+  <label for="{{ f.id_for_label }}">{{ f.label }}{% if f.field.required %} <i>*</i>{% endif %}</label>
+  {{ f }}
+  {% if f.help_text %}<small class="help">{{ f.help_text }}</small>{% endif %}
+  {% for e in f.errors %}<small class="err">{{ e }}</small>{% endfor %}
+</div>

@@ -1,0 +1,45 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Darsliklarim{% endblock %}
+{% block crumbs %}<span>Darsliklarim</span>{% endblock %}
+{% block content %}
+<div class="st-head">
+  <div><div class="eyebrow"><span class="dot"></span>Studiya</div><h1>Darsliklarim</h1>
+    <p class="muted">Darslikni tanlang yoki yangisini yarating. O‘zgarishlar darhol saqlanadi.</p></div>
+  <div class="btn-row" style="margin-top:0">
+    <a class="btn ghost" href="{% url 'studio:backup' %}">{% icon 'download' 18 %} Zaxira nusxa</a>
+    <a class="btn primary" href="{% url 'studio:course_new' %}">{% icon 'plus' 18 %} Yangi darslik</a>
+  </div>
+</div>
+
+<div class="st-courses">
+  {% for c in courses %}
+  <div class="st-course rv" style="{{ forloop.counter0|delay }};--g:{{ c.color }}">
+    <div class="st-course-cover"><span class="book-star"></span><b>{{ c.title }}</b><small>{% firstof c.module 'Elektron darslik' %}</small></div>
+    <div class="st-course-body">
+      <p><b>{{ c.author }}</b>{% if c.college %} · {{ c.college }}{% endif %}</p>
+      <p class="muted">{{ c.n_topics }} ta mavzu · oxirgi o‘zgarish: {{ c.updated|date:"d.m.Y H:i" }}</p>
+      <div class="st-course-btns">
+        <a class="btn primary sm" href="{% url 'studio:course' c.slug %}">{% icon 'pen' 16 %} Tahrirlash</a>
+        <a class="btn ghost sm" href="{% url 'lectures:course' c.slug %}" target="_blank">{% icon 'play' 16 %} Ko‘rish</a>
+        <a class="btn ghost sm" href="{% url 'studio:export' c.slug %}">{% icon 'file' 16 %} Eksport</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="st-empty">{% icon 'book' 40 %}<h3>Hali darslik yo‘q</h3><p class="muted">Birinchi darslikni yarating — Word faylini yuklash kifoya.</p>
+    <a class="btn primary" href="{% url 'studio:course_new' %}">{% icon 'plus' 18 %} Yangi darslik</a></div>
+  {% endfor %}
+</div>
+
+<div class="st-help">
+  <h3>{% icon 'info' 18 %} Qanday ishlaydi?</h3>
+  <ol>
+    <li><b>Yarating</b> — Word (.docx) faylini yuklang yoki bo‘sh darslikdan boshlang.</li>
+    <li><b>To‘ldiring</b> — mavzular, reja bo‘limlari, matn, rasm, jadval, video va testlar qo‘shing.</li>
+    <li><b>Bezang</b> — har bir mavzu uchun 3D ko‘rgazma va bo‘lim ranglarini tanlang.</li>
+    <li><b>Saqlang</b> — «Zaxira nusxa» barcha darsliklarni bitta faylga yig‘adi; dastur har ishga tushganda ham nusxa oladi.</li>
+    <li><b>Tarqating</b> — «Eksport» tugmasi darslikni internetsiz ochiladigan ZIP qilib beradi (fleshka, disk).</li>
+  </ol>
+</div>
+{% endblock %}

@@ -1,0 +1,183 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block edit %}{% if slide.kind == 'sec' %}{% url 'studio:section' course.slug t.number sec.pk %}{% elif slide.kind == 'slides' or slide.kind == 'video' %}{% url 'studio:topic' course.slug t.number %}?tab=resurslar{% elif slide.kind == 'qa' %}{% url 'studio:topic' course.slug t.number %}?tab=savoljavob{% elif slide.kind == 'test' %}{% url 'studio:topic' course.slug t.number %}?tab=test{% elif slide.kind == 'self' %}{% url 'studio:topic' course.slug t.number %}?tab=qoshimcha{% else %}{% url 'studio:topic' course.slug t.number %}{% endif %}{% endblock %}
+{% block back %}{% if s > 0 %}{{ prev }}{% else %}{% url 'lectures:contents' course.slug %}{% if t.part %}#p{{ t.part.pk }}{% endif %}{% endif %}{% endblock %}
+{% block title %}{{ t.number }}-mavzu: {{ t.title }} — {{ slide.name }}{% endblock %}
+{% block view %}mavzu{% endblock %}
+{% block body_attrs %}data-prev="{{ prev }}" data-next="{{ next }}"{% endblock %}
+{% block progress %}{{ progress|stringformat:".2f" }}{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><a href="{% url 'lectures:contents' course.slug %}">Mundarija</a><i></i><a href="{% url 'lectures:slide' course.slug t.number 0 %}">{{ t.number }}-mavzu</a><i></i><span>{{ slide.name }}</span>{% endblock %}
+
+{% block content %}
+<section class="view topic" style="--g:{{ t.color }}">
+  <header class="t-head {% if s > 0 %}mini{% endif %}">
+    <span class="t-num">{{ t.number|pad2 }}</span>
+    <div class="t-titles">
+      <div class="t-meta"><span class="badge {% if t.kind == 'Nazariy' %}nz{% else %}am{% endif %}">{{ t.kind }}</span>
+        <span>{% icon 'clock' 15 %} {{ t.hours }} soat · {% widthratio t.hours 1 40 %} daqiqa</span>{% if t.part %}<span>{% icon t.part.icon 15 %} {{ t.part.name }}</span>{% endif %}</div>
+      <h1>{{ t.title }}</h1>
+    </div>
+  </header>
+
+  <div class="slide fwd">
+  {% if slide.kind == 'intro' %}
+    {# ---------------------------------------------------------- KIRISH #}
+    <div class="intro">
+      <div class="intro-left">
+        {% if t.goal %}
+        <div class="kicker rv" style="{{ 0|delay }}">{% icon 'target' 16 %} Mashg‘ulot maqsadi</div>
+        <p class="big-lead rv" style="{{ 1|delay }}">{{ t.goal|safe }}</p>
+        {% endif %}
+        {% if sections %}
+        <div class="kicker rv" style="{{ 2|delay }}">{% icon 'list' 16 %} Reja</div>
+        <div class="plan-cards">
+          {% for sec in sections %}
+          <a class="plan-card rv" style="{{ forloop.counter|delay:2 }}" href="{% url 'lectures:slide' course.slug t.number forloop.counter %}" data-tilt>
+            <i>{{ forloop.counter }}</i><span>{{ sec.title }}</span>{% icon 'arrowRight' 18 %}</a>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if t.result %}<div class="result rv" style="{{ 6|delay }}">{% icon 'sparkles' 18 %}<div><b>Kutilayotgan natija</b><p>{{ t.result|safe }}</p></div></div>{% endif %}
+        <div class="btn-row rv" style="{{ 7|delay }}">
+          <a class="btn ghost" href="{% url 'lectures:lecture_text' course.slug t.number %}">{% icon 'book' 18 %} Ma’ruza matni</a>
+          {% if t.lesson_model %}<a class="btn ghost" href="#model">{% icon 'layers' 18 %} Texnologiyalar</a>{% endif %}
+          {% if t.prev_questions %}<a class="btn ghost" href="#prevq">{% icon 'question' 18 %} Takrorlash savollari</a>{% endif %}
+          {% if next %}<a class="btn primary" href="{{ next }}">Boshlash {% icon 'arrowRight' 18 %}</a>{% endif %}
+        </div>
+        {% if t.methods %}<p class="methods rv" style="{{ 8|delay }}"><b>Metodlar:</b> {{ t.methods|safe }}</p>{% endif %}
+      </div>
+      <div class="intro-right">{% scene t.scene %}</div>
+    </div>
+
+  {% elif slide.kind == 'sec' %}
+    {# ---------------------------------------------------------- REJA BO'LIMI #}
+    <div class="sec">
+      <div class="sec-main">
+        <div class="kicker rv" style="{{ 0|delay }}"><span class="pill">{{ slide.i }}-reja</span> {{ slide.i }} / {{ sections|length }} · bayon</div>
+        <h2 class="sec-title rv" style="{{ 1|delay }}">{{ sec.title }}</h2>
+        {% if sc.lead %}<p class="big-lead rv" style="{{ 2|delay }}">{{ sc.lead|safe }}</p>{% endif %}
+        {% if sc.image %}<figure class="figure rv" style="{{ 3|delay }}"><img src="{{ sc.image.src|media }}" alt="{{ sc.image.caption }}">{% if sc.image.caption %}<figcaption>{{ sc.image.caption }}</figcaption>{% endif %}</figure>{% endif %}
+        {% if sc.keys %}
+          {% if sc.keys_head %}<div class="keys-head rv" style="{{ 3|delay }}">{% icon 'layers' 16 %} {{ sc.keys_head }}</div>{% endif %}
+          <div class="keys">
+            {% for k in sc.keys %}
+            <div class="key rv" style="{{ forloop.counter|delay:2 }}" data-tilt><i>{{ k.n }}</i>{% if k.k %}<b>{{ k.k|safe }}</b>{% endif %}<p>{{ k.v|safe }}</p></div>
+            {% endfor %}
+          </div>
+        {% elif sc.table %}
+          {% include 'lectures/partials/table.html' with rows=sc.table cls='compact rv' %}
+        {% elif sc.extra %}<p class="rv">{{ sc.extra|safe }}</p>{% endif %}
+        <div class="btn-row rv" style="{{ 8|delay }}">
+          <a class="btn primary glow" href="#more">{% icon 'plus' 18 %} Qo‘shimcha ma’lumot</a>
+          {% if sc.has_table %}<a class="btn ghost" href="#jadval">{% icon 'grid' 18 %} Jadval</a>{% endif %}
+        </div>
+      </div>
+      <aside class="sec-side">
+        <div class="side-scene">{% scene t.scene True %}</div>
+        {% if sc.heads %}<div class="toc glass rv" style="{{ 4|delay }}"><small>Bo‘lim tarkibi</small>
+          {% for h, bi in sc.heads %}<a href="#more-{{ bi }}">{% icon 'chevronDown' 14 %} {{ h }}</a>{% endfor %}</div>{% endif %}
+        {% if sc.note %}<div class="fact rv" style="{{ 6|delay }}"><span>{% icon 'info' 18 %} Eslatma</span><p>{{ sc.note.html|safe }}</p></div>
+        {% elif sc.fact %}<div class="fact rv" style="{{ 6|delay }}"><span>{% icon 'info' 18 %} Bilasizmi?</span><p>{{ sc.fact|safe }}</p></div>{% endif %}
+      </aside>
+    </div>
+
+  {% elif slide.kind == 'slides' or slide.kind == 'video' %}
+    {# ---------------------------------------------------------- TAQDIMOT / VIDEO DARS #}
+    <div class="kicker rv" style="{{ 0|delay }}">{% if slide.kind == 'video' %}{% icon 'video' 16 %} Video dars{% else %}{% icon 'monitor' 16 %} Taqdimot materiallari{% endif %}</div>
+    <div class="res-grid one">{% for x in res_list %}{% include 'lectures/partials/resource.html' with embed=True %}{% endfor %}</div>
+
+  {% elif slide.kind == 'qa' %}
+    {# ---------------------------------------------------------- TEZKOR SAVOL-JAVOB #}
+    <div class="kicker rv" style="{{ 0|delay }}">{% icon 'question' 16 %} Tezkor savol-javob · kartochkani bosib javobni tekshiring</div>
+    {% include 'lectures/partials/qa_cards.html' with items=qa %}
+
+  {% elif slide.kind == 'test' %}
+    {# ---------------------------------------------------------- SAVOL VA TEST #}
+    <div class="tests">
+      <div class="q-col">
+        {% if t.questions %}
+        <div class="kicker rv" style="{{ 0|delay }}">{% icon 'question' 16 %} Mustahkamlash uchun savollar</div>
+        <ol class="qlist">{% for q in t.questions %}<li class="rv" style="{{ forloop.counter|delay }}"><i>{{ forloop.counter }}</i><span>{{ q }}</span></li>{% endfor %}</ol>
+        {% endif %}
+        <div class="btn-row rv" style="{{ 7|delay }}">
+          {% if t.grading %}<a class="btn ghost" href="#grading">{% icon 'star' 18 %} Baholash mezoni</a>{% endif %}
+          {% if t.prev_questions %}<a class="btn ghost" href="#prevq">{% icon 'refresh' 18 %} O‘tgan mavzu savollari</a>{% endif %}
+        </div>
+      </div>
+      {% if rows %}
+      {% url 'lectures:slide' course.slug t.number s as again %}
+      {% include 'lectures/partials/quiz.html' with title=t.number|stringformat:"d"|add:"-mavzu bo‘yicha test" again=again show_topic=False %}
+      {% endif %}
+    </div>
+
+  {% else %}
+    {# ---------------------------------------------------------- MUSTAQIL TA'LIM #}
+    <div class="self">
+      <div>
+        {% if tasks %}
+        <div class="kicker rv" style="{{ 0|delay }}">{% icon 'pen' 16 %} Mustaqil ta’lim uchun topshiriqlar</div>
+        <div class="tasks">{% for task in tasks %}
+          <div class="task rv" style="{{ forloop.counter|delay }}" data-tilt><span class="task-n">{% if task.cap %}{% icon 'graduation' 22 %}{% else %}{% icon 'pen' 22 %}{% endif %}</span>
+            <div><b>{{ task.k|safe }}</b><p>{{ task.v|safe }}</p></div></div>{% endfor %}</div>
+        {% endif %}
+      </div>
+      <div>
+        {% if materials %}
+        <div class="kicker rv" style="{{ 2|delay }}">{% icon 'file' 16 %} Materiallar</div>
+        <div class="res-grid one mat">{% for x in materials %}{% include 'lectures/partials/resource.html' with embed=False %}{% endfor %}</div>
+        {% endif %}
+        {% if t.literature %}
+        <div class="kicker rv" style="{{ 2|delay }}">{% icon 'book' 16 %} Adabiyotlar va manbalar</div>
+        <ul class="lit">{% for a in t.literature %}<li class="rv" style="{{ forloop.counter|delay:2 }}">{% if a|is_link %}{% icon 'link' 16 %}{% else %}{% icon 'book' 16 %}{% endif %}<span>{{ a }}</span></li>{% endfor %}</ul>
+        {% endif %}
+        {% if next_topic %}
+        <a class="next-topic rv" style="{{ 9|delay }}" href="{% url 'lectures:slide' course.slug next_topic.number 0 %}" data-tilt>
+          <small>Keyingi mavzu · {{ next_topic.number }}</small><b>{{ next_topic.title }}</b>{% icon 'arrowRight' 22 %}</a>
+        {% else %}
+        <a class="next-topic rv" style="{{ 9|delay }}" href="{% url 'lectures:final' course.slug %}" data-tilt><small>Darslik yakunlandi</small><b>Yakuniy testni topshiring</b>{% icon 'trophy' 22 %}</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block dock %}
+<nav class="dock" style="--g:{{ t.color }}">
+  <div class="dock-inner">
+    <a class="dock-btn" href="{% url 'lectures:course' course.slug %}" title="Bosh sahifa">{% icon 'home' %}<span>Bosh sahifa</span></a>
+    <a class="dock-btn" href="{% url 'lectures:contents' course.slug %}" title="Mundarija">{% icon 'grid' %}<span>Mundarija</span></a>
+    <i class="sep"></i>
+    <a class="nav-arrow" href="{{ prev|default:'#' }}" title="Oldingi (←)" {% if not prev %}aria-disabled="true"{% endif %}>{% icon 'left' 22 %}</a>
+    <div class="tabs">{% for sl in slides %}
+      <a href="{% url 'lectures:slide' course.slug t.number forloop.counter0 %}" class="tab {% if forloop.counter0 == s %}on{% elif forloop.counter0 < s %}done{% endif %}" title="{{ sl.name }}">
+        <i>{% if sl.kind == 'sec' %}{{ sl.i }}{% else %}{% icon sl.icon 12 %}{% endif %}</i><span>{{ sl.name }}</span></a>{% endfor %}
+    </div>
+    <a class="nav-arrow" href="{{ next|default:'#' }}" title="Keyingi (→)" {% if not next %}aria-disabled="true"{% endif %}>{% icon 'right' 22 %}</a>
+    <i class="sep"></i>
+    <div class="pager">
+      {% for k in near %}<a href="{% url 'lectures:slide' course.slug k 0 %}" class="{% if k == t.number %}on{% endif %}">{{ k }}</a>{% endfor %}
+      <a class="more" href="#jumper" title="Barcha mavzular">{% icon 'hash' 16 %}</a>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block drawers %}
+  {% with kick=t.number|stringformat:"d"|add:"-mavzu" %}
+  {% if slide.kind == 'intro' and t.lesson_model %}
+    {% include 'lectures/partials/drawer.html' with id='model' kind='model' kicker=kick|add:" · Texnologiyalar" title='Mashg‘ulotning ta’lim texnologiyasi' data=t.lesson_model extra=t.tech_map %}
+  {% endif %}
+  {% if slide.kind == 'intro' or slide.kind == 'test' %}{% if t.prev_questions %}
+    {% include 'lectures/partials/drawer.html' with id='prevq' kind='list' kicker=kick|add:" · 1-ilova" title='O‘tgan mavzu bo‘yicha savollar' data=t.prev_questions %}
+  {% endif %}{% endif %}
+  {% if slide.kind == 'test' and t.grading %}
+    {% include 'lectures/partials/drawer.html' with id='grading' kind='table' kicker=kick|add:" · 2-ilova" title='Baholash mezoni' data=t.grading %}
+  {% endif %}
+  {% if slide.kind == 'sec' %}
+    {% include 'lectures/partials/drawer.html' with id='more' kind='blocks' kicker=kick|add:" · Qo‘shimcha ma’lumot" title=sec.title data=sec.blocks %}
+    {% if sc.has_table %}{% include 'lectures/partials/drawer.html' with id='jadval' kind='table' kicker='Jadval' title=sec.title data=sec_table %}{% endif %}
+  {% endif %}
+  {% endwith %}
+{% endblock %}

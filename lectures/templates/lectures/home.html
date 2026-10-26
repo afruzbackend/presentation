@@ -1,0 +1,81 @@
+{% extends 'lectures/base.html' %}
+{% load static lecture_tags %}
+{% block edit %}{% url 'studio:settings' course.slug %}{% endblock %}
+{% block back %}{% if exporting %}{% url 'lectures:course' course.slug %}{% else %}{% url 'lectures:library' %}{% endif %}{% endblock %}
+{% block backbtn %}{% if not exporting %}{{ block.super }}{% endif %}{% endblock %}
+{% block content %}
+<section class="view home">
+  {% if course.cover_image %}
+  {# Fon rasmli bosh qism: ustoz dars o'tayotgan payt #}
+  <div class="hero-photo">
+    <img class="hero-photo-img" src="{{ course.cover_image.url }}" alt="{{ course.author }} dars o‘tmoqda">
+    <div class="hero-photo-shade"></div>
+    <div class="hero-text">
+      <div class="eyebrow rv" style="{{ 0|delay }}"><span class="dot"></span>{% firstof course.college 'Elektron darslik' %}{% if course.module %} · {{ course.module }}{% endif %}</div>
+      <h1 class="hero-title rv" style="{{ 1|delay }}"><span class="grad">{{ course.title_first }}</span>{% if course.title_rest %}<br>{{ course.title_rest }}{% endif %}</h1>
+      <p class="hero-lead rv" style="{{ 2|delay }}">{{ course.subtitle }}</p>
+      <div class="cta rv" style="{{ 3|delay }}">
+        <a class="btn primary" href="{{ start.0 }}">{% icon 'play' 18 %} {{ start.1 }}</a>
+        <a class="btn ghost light" href="{% url 'lectures:contents' course.slug %}">{% icon 'grid' 18 %} Mundarija</a>
+      </div>
+      <div class="stats rv" style="{{ 4|delay }}">
+        {% for value, label in stats %}<div><b>{{ value }}</b><span>{{ label }}</span></div>{% endfor %}
+      </div>
+    </div>
+    <div class="presenter glass">
+      <small>Taqdim etadi</small>
+      <b>{{ course.author }}</b>
+      <span>{{ course.author_role }}</span>
+    </div>
+    <div class="hero-photo-band" aria-hidden="true"></div>
+  </div>
+  {% else %}
+  <div class="hero">
+    <div class="hero-text">
+      <div class="eyebrow rv" style="{{ 0|delay }}"><span class="dot"></span>{% firstof course.college 'Elektron darslik' %}{% if course.module %} · {{ course.module }}{% endif %}</div>
+      <h1 class="hero-title rv" style="{{ 1|delay }}"><span class="grad">{{ course.title_first }}</span>{% if course.title_rest %}<br>{{ course.title_rest }}{% endif %}</h1>
+      <p class="hero-lead rv" style="{{ 2|delay }}">{{ course.subtitle }}</p>
+      <div class="cta rv" style="{{ 3|delay }}">
+        <a class="btn primary" href="{{ start.0 }}">{% icon 'play' 18 %} {{ start.1 }}</a>
+        <a class="btn ghost" href="{% url 'lectures:contents' course.slug %}">{% icon 'grid' 18 %} Mundarija</a>
+      </div>
+      <div class="stats rv" style="{{ 4|delay }}">
+        {% for value, label in stats %}<div><b>{{ value }}</b><span>{{ label }}</span></div>{% endfor %}
+      </div>
+    </div>
+    <div class="hero-visual rv" style="{{ 2|delay }}">
+      <div class="rosette-wrap"><div class="rosette" data-follow>{% rosette ring_text %}</div></div>
+      <div class="presenter glass">
+        <small>Taqdim etadi</small>
+        <b>{{ course.author }}</b>
+        <span>{{ course.author_role }}</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="section-head"><h2>Darslik bo‘limlari</h2><p>Ma’ruza, taqdimot, video, materiallar va nazorat</p></div>
+  <div class="menu four">
+    {% for href, ic, title, sub, color in tiles %}
+    <a class="tile rv" href="{{ href }}" style="{{ forloop.counter0|delay:4 }};--g:{{ color }}" data-tilt>
+      <span class="tile-ic">{% icon ic 26 %}</span>
+      <span class="tile-txt"><b>{{ title }}</b><small>{{ sub }}</small></span>
+      <span class="tile-go">{% icon 'arrowRight' 18 %}</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if parts %}
+  <div class="section-head"><h2>Darslik tarkibi</h2><p>Mavzular {{ parts|length }} ta bo‘limga ajratilgan</p></div>
+  <div class="groups">
+    {% for p in parts %}
+    <a class="group rv" href="{% url 'lectures:contents' course.slug %}#p{{ p.pk }}" style="{{ forloop.counter0|delay }};--g:{{ p.color }}" data-tilt>
+      <span class="group-ic">{% icon p.icon 22 %}</span>
+      <small>{{ p.topics.count }} ta mavzu</small><b>{{ p.name }}</b>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

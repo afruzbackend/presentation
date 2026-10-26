@@ -1,0 +1,34 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Yangi darslik{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><span>Yangi darslik</span>{% endblock %}
+{% block content %}
+<div class="st-head"><div><div class="eyebrow"><span class="dot"></span>Yangi darslik</div><h1>Darslikni qanday boshlaymiz?</h1></div></div>
+
+<div class="st-two">
+  <form method="post" enctype="multipart/form-data" class="st-card st-choice">
+    {% csrf_token %}
+    <div class="st-choice-head"><span class="st-choice-ic">{% icon 'file' 28 %}</span>
+      <div><h2>Word faylidan</h2><p class="muted">Tavsiya etiladi. Ma’ruza matnini yuklang — mavzular, reja bo‘limlari, jadvallar,
+        savollar va testlar avtomatik ajratiladi.</p></div></div>
+    {% include 'lectures/studio/field.html' with f=imp.file %}
+    {% include 'lectures/studio/field.html' with f=imp.author %}
+    {% include 'lectures/studio/field.html' with f=imp.title %}
+    {% include 'lectures/studio/field.html' with f=imp.author_photo %}
+    <div class="st-tip">{% icon 'info' 16 %}<span><b>Fayl tuzilishi:</b> «Mavzu: Nazariy. …» ko‘rinishidagi o‘quv-uslubiy majmua bo‘lsa, hammasi to‘liq ajratiladi.
+      Oddiy hujjatda Word sarlavhalari (Sarlavha 1 — mavzu, Sarlavha 2 — reja bo‘limi) bo‘yicha bo‘linadi.</span></div>
+    <button class="btn primary wide-btn" name="import" value="1">{% icon 'sparkles' 18 %} Yuklash va darslik yaratish</button>
+  </form>
+
+  <form method="post" class="st-card st-choice">
+    {% csrf_token %}
+    <div class="st-choice-head"><span class="st-choice-ic alt">{% icon 'pen' 28 %}</span>
+      <div><h2>Noldan</h2><p class="muted">Bo‘sh darslik yaratiladi, mavzularni o‘zingiz birma-bir qo‘shasiz.</p></div></div>
+    {% include 'lectures/studio/field.html' with f=new.title %}
+    {% include 'lectures/studio/field.html' with f=new.author %}
+    {% include 'lectures/studio/field.html' with f=new.module %}
+    {% include 'lectures/studio/field.html' with f=new.college %}
+    <button class="btn ghost wide-btn">{% icon 'plus' 18 %} Bo‘sh darslik yaratish</button>
+  </form>
+</div>
+{% endblock %}

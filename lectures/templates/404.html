@@ -1,0 +1,12 @@
+{% extends 'lectures/error_base.html' %}
+{% load lecture_tags %}
+{% block title %}Sahifa topilmadi{% endblock %}
+{% block heading %}Sahifa topilmadi{% endblock %}
+{% block message %}Siz izlagan sahifa mavjud emas: manzil noto‘g‘ri yozilgan yoki sahifa (mavzu, darslik) o‘chirilgan bo‘lishi mumkin.{% endblock %}
+{% block extra %}
+<nav class="err-links">
+  <a href="{% url 'lectures:library' %}">{% icon 'book' 16 %} Darsliklar kutubxonasi</a>
+  <a href="{% url 'studio:dashboard' %}">{% icon 'pen' 16 %} Studiya</a>
+  <a href="{% url 'studio:course_new' %}">{% icon 'plus' 16 %} Yangi darslik</a>
+</nav>
+{% endblock %}

@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Mahalliy ma'lumotlar: baza, yuklangan fayllar, parol
+db.sqlite3
+media/
+KIRISH.txt
+secret_key.txt
+
+# Muharrir va vositalar sozlamalari
+.idea/
+.claude/
+
+# Eksport qilingan ZIP fayllar
+*-oflayn.zip
+backups/

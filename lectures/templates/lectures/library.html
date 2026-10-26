@@ -1,0 +1,46 @@
+{% extends 'lectures/base.html' %}
+{% load static lecture_tags %}
+{% block title %}Elektron darsliklar{% endblock %}
+{% block view %}library{% endblock %}
+{% block backbtn %}{% endblock %}
+{% block content %}
+<section class="view library">
+  <div class="lib-hero">
+    <div>
+      <div class="eyebrow rv" style="{{ 0|delay }}"><span class="dot"></span>Elektron darslik yaratish dasturi</div>
+      <h1 class="lib-title rv" style="{{ 1|delay }}"><span class="grad">Darsliklar</span> kutubxonasi</h1>
+      <p class="hero-lead rv" style="{{ 2|delay }}">Tayyor darslikni tanlang yoki Studiyada yangisini yarating: Word (.docx) faylini yuklang —
+        mavzular, reja bo‘limlari va testlar o‘zi ajratiladi. Tayyor darslikni fleshkaga yozib, internetsiz ochish mumkin.</p>
+      <div class="cta rv" style="{{ 3|delay }}">
+        <a class="btn primary" href="{% url 'studio:course_new' %}">{% icon 'plus' 18 %} Yangi darslik yaratish</a>
+        <a class="btn ghost" href="{% url 'studio:dashboard' %}">{% icon 'pen' 18 %} Studiya</a>
+      </div>
+    </div>
+    <div class="lib-visual rv" style="{{ 2|delay }}" aria-hidden="true">
+      <div class="rosette-wrap"><div class="rosette small" data-follow>{% rosette 'ELEKTRON DARSLIK · YARATISH · KO‘RISH · EKSPORT · TEST · 3D · ' %}</div></div>
+    </div>
+  </div>
+
+  <div class="section-head"><h2>Darsliklar</h2><p>{{ courses|length }} ta darslik</p></div>
+  <div class="books">
+    {% for c in courses %}
+    <a class="book rv" href="{% url 'lectures:course' c.slug %}" style="{{ forloop.counter0|delay }};--g:{{ c.color }}" data-tilt>
+      <span class="book-cover">
+        <span class="book-star"></span>
+        <b>{{ c.title }}</b>
+        <small>{% firstof c.module 'Elektron darslik' %}</small>
+      </span>
+      <span class="book-info">
+        <span class="book-author">{% if c.author_photo %}<img src="{{ c.author_photo.url }}" alt="">{% else %}{% icon 'user' 18 %}{% endif %}{{ c.author }}</span>
+        <span class="book-meta">{{ c.n_topics }} ta mavzu · {{ c.updated|date:"d.m.Y" }}</span>
+      </span>
+    </a>
+    {% endfor %}
+    <a class="book book-new rv" href="{% url 'studio:course_new' %}" style="{{ courses|length|delay }}">
+      <span class="book-plus">{% icon 'plus' 34 %}</span>
+      <b>Yangi darslik</b><small>.docx yuklash yoki noldan boshlash</small>
+    </a>
+  </div>
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

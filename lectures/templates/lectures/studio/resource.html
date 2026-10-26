@@ -1,0 +1,32 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}{{ r.title }} — tahrirlash{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a>{% if r.topic %}<i></i><a href="{% url 'studio:topic' course.slug r.topic.number %}?tab=resurslar">{{ r.topic.number }}-mavzu</a>{% endif %}<i></i><span>{{ r.get_kind_display }}</span>{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="st-grid">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ back }}">
+  <section class="st-card">
+    <h3>{% icon 'pen' 18 %} {{ r.get_kind_display }}ni tahrirlash</h3>
+    {% if form.non_field_errors %}<div class="msg error">{% icon 'info' 18 %}<span>{{ form.non_field_errors|join:' ' }}</span></div>{% endif %}
+    <div class="st-fields">
+      {% include 'lectures/studio/field.html' with f=form.kind %}
+      {% include 'lectures/studio/field.html' with f=form.topic %}
+      {% include 'lectures/studio/field.html' with f=form.title wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.file wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.url wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.note wide=True %}
+    </div>
+    <div class="btn-row">
+      <button class="btn primary">{% icon 'check' 18 %} Saqlash</button>
+      <a class="btn ghost" href="{{ back }}">Bekor qilish</a>
+      <button class="btn ghost danger" name="delete" value="1" formnovalidate>{% icon 'close' 18 %} O‘chirish</button>
+    </div>
+  </section>
+  <aside class="st-card">
+    <h3>{% icon 'play' 18 %} Hozirgi ko‘rinishi</h3>
+    {% include 'lectures/partials/resource.html' with x=r embed=True %}
+    <p class="help">Faylni almashtirish uchun yangisini tanlang. Eski fayl avtomatik o‘chiriladi.</p>
+  </aside>
+</form>
+{% endblock %}

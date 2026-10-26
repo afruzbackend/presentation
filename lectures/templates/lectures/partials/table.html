@@ -1,0 +1,4 @@
+{% if rows %}<div class="tbl-wrap {{ cls }}"><table>
+  <thead><tr>{% for c in rows.0 %}<th>{{ c|safe }}</th>{% endfor %}</tr></thead>
+  <tbody>{% for r in rows|slice:"1:" %}<tr>{% for c in r %}<td>{{ c|safe }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+</table></div>{% endif %}

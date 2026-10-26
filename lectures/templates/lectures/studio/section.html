@@ -1,0 +1,43 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}{{ sec.title }} — {{ t.number }}-mavzu{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><a href="{% url 'studio:topic' course.slug t.number %}?tab=reja">{{ t.number }}-mavzu</a><i></i><span>{{ slide_no }}-reja</span>{% endblock %}
+{% block content %}
+<form method="post" class="st-card st-sec-title" style="--g:{{ t.color }}">
+  {% csrf_token %}
+  <span class="pill">{{ slide_no }}-reja</span>
+  {% include 'lectures/studio/field.html' with f=form.title %}
+  <button class="btn primary sm">{% icon 'check' 16 %} Saqlash</button>
+  <a class="btn ghost sm" href="{% url 'lectures:slide' course.slug t.number slide_no %}" target="_blank">{% icon 'play' 16 %} Slaydni ko‘rish</a>
+</form>
+
+<div class="st-blocks">
+  {% for x in blocks %}
+  <div class="st-add-between">
+    {% for k, n, ic in types %}<a href="{% url 'studio:block_new' course.slug t.number sec.pk %}?t={{ k }}&pos={{ x.i }}" title="Bu yerga: {{ n }}">{% icon ic 14 %}</a>{% endfor %}
+  </div>
+  <div class="st-block t-{{ x.b.t }}" id="b{{ x.i }}">
+    <div class="st-block-type">{{ x.name }}</div>
+    <a class="st-block-body" href="{% url 'studio:block' course.slug t.number sec.pk x.i %}">
+      {% if x.b.t == 'h' %}<h4>{{ x.b.text }}</h4>
+      {% elif x.b.t == 'image' %}<img src="{{ x.b.src|media }}" alt=""><span>{{ x.b.caption }}</span>
+      {% else %}<p>{{ x.summary }}</p>{% endif %}
+    </a>
+    <div class="st-acts">
+      <form method="post" action="{% url 'studio:block_action' course.slug t.number sec.pk x.i 'up' %}">{% csrf_token %}<button class="act" {% if forloop.first %}disabled{% endif %}>↑</button></form>
+      <form method="post" action="{% url 'studio:block_action' course.slug t.number sec.pk x.i 'down' %}">{% csrf_token %}<button class="act" {% if forloop.last %}disabled{% endif %}>↓</button></form>
+      <a class="act" href="{% url 'studio:block' course.slug t.number sec.pk x.i %}" title="Tahrirlash">{% icon 'pen' 14 %}</a>
+      <form method="post" action="{% url 'studio:block_action' course.slug t.number sec.pk x.i 'delete' %}">{% csrf_token %}<button class="act danger" title="O‘chirish">{% icon 'close' 14 %}</button></form>
+    </div>
+  </div>
+  {% empty %}
+  <div class="st-empty">{% icon 'file' 36 %}<h3>Bo‘lim bo‘sh</h3><p class="muted">Quyidagi tugmalardan birini bosib, birinchi blokni qo‘shing.
+    Slaydda birinchi matn — qisqa bayon, birinchi ro‘yxat — kartochkalar bo‘lib chiqadi; to‘liq matn «Qo‘shimcha ma’lumot»da.</p></div>
+  {% endfor %}
+</div>
+
+<div class="st-add">
+  <b>Blok qo‘shish:</b>
+  {% for k, n, ic in types %}<a class="btn ghost sm" href="{% url 'studio:block_new' course.slug t.number sec.pk %}?t={{ k }}">{% icon ic 16 %} {{ n }}</a>{% endfor %}
+</div>
+{% endblock %}

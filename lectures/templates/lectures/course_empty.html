@@ -1,0 +1,10 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block content %}
+<section class="view">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>{{ course.title }}</div>
+    <h1>Darslikda hali mavzu yo‘q</h1>
+    <p class="muted">Studiyada birinchi mavzuni qo‘shing yoki Word (.docx) faylini yuklang.</p></div></div>
+  {% if not exporting %}<a class="btn primary" href="{% url 'studio:course' course.slug %}">{% icon 'pen' 18 %} Studiyada ochish</a>{% endif %}
+</section>
+{% endblock %}

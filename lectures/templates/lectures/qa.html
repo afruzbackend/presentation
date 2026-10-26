@@ -1,0 +1,19 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block title %}Tezkor savol-javob — {{ course.title }}{% endblock %}
+{% block view %}savoljavob{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Tezkor savol-javob</span>{% endblock %}
+{% block content %}
+<section class="view">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>Tezkor savol-javob</div>
+    <h1>Savol-javob kartochkalari</h1><p class="muted">{{ total }} ta kartochka. Savolni o‘qing, javobni o‘ylang, so‘ng kartochkani bosib tekshiring.</p></div></div>
+  <nav class="alpha qa-nav">{% for t in qa_topics %}<a href="#q{{ t.number }}" style="--g:{{ t.color }}">{{ t.number }}</a>{% endfor %}</nav>
+  {% for t in qa_topics %}
+  <h2 class="res-group" id="q{{ t.number }}" style="--g:{{ t.color }}"><span class="res-num">{{ t.number }}</span> {{ t.title }}</h2>
+  {% include 'lectures/partials/qa_cards.html' with items=t.qa.all %}
+  {% empty %}
+  <div class="empty-state"><span class="empty-ic">{% icon 'question' 40 %}</span><h3>Hozircha savol-javob yo‘q</h3></div>
+  {% endfor %}
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

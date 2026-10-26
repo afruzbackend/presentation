@@ -1,0 +1,42 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block edit %}{% url 'studio:topic' course.slug t.number %}?tab=reja{% endblock %}
+{% block back %}{% url 'lectures:lecture' course.slug %}{% endblock %}
+{% block title %}{{ t.number }}-mavzu: {{ t.title }} — Ma’ruza matni{% endblock %}
+{% block view %}maruza{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><a href="{% url 'lectures:lecture' course.slug %}">Ma’ruza matni</a><i></i><span>{{ t.number }}-mavzu</span>{% endblock %}
+{% block content %}
+<article class="view reader" style="--g:{{ t.color }}">
+  <header class="reader-head">
+    <span class="t-num">{{ t.number|pad2 }}</span>
+    <div>
+      <div class="t-meta"><span class="badge {% if t.kind == 'Nazariy' %}nz{% else %}am{% endif %}">{{ t.kind }}</span><span>{{ t.hours }} soat</span>{% if t.part %}<span>{{ t.part.name }}</span>{% endif %}</div>
+      <h1>{{ t.title }}</h1>
+    </div>
+    <div class="reader-acts no-print">
+      <a class="btn ghost sm" href="{% url 'lectures:slide' course.slug t.number 0 %}">{% icon 'play' 16 %} Slaydlarda</a>
+      <a class="btn ghost sm" href="#" onclick="print();return false;">{% icon 'printer' 16 %} Chop etish</a>
+    </div>
+  </header>
+
+  {% if t.goal %}<p class="reader-goal"><b>Maqsad:</b> {{ t.goal|safe }}</p>{% endif %}
+  {% if sections %}
+  <nav class="reader-plan"><b>Reja:</b><ol>{% for s in sections %}<li><a href="#r{{ s.order }}">{{ s.title }}</a></li>{% endfor %}</ol></nav>
+  {% endif %}
+
+  <div class="rich reader-body">
+    {% for s in sections %}
+    <section id="r{{ s.order }}">
+      <h2>{{ forloop.counter }}. {{ s.title }}</h2>
+      {% include 'lectures/partials/blocks.html' with blocks=s.blocks prefix='r'|add:s.order|stringformat:"s" %}
+    </section>
+    {% endfor %}
+    {% if t.literature %}<section><h2>Adabiyotlar</h2><ol>{% for a in t.literature %}<li>{{ a }}</li>{% endfor %}</ol></section>{% endif %}
+  </div>
+
+  <nav class="reader-nav no-print">
+    {% if prev_t %}<a href="{% url 'lectures:lecture_text' course.slug prev_t.number %}">{% icon 'arrowLeft' 18 %}<span><small>Oldingi</small>{{ prev_t.number }}. {{ prev_t.title }}</span></a>{% else %}<span></span>{% endif %}
+    {% if next_t %}<a class="nx" href="{% url 'lectures:lecture_text' course.slug next_t.number %}"><span><small>Keyingi</small>{{ next_t.number }}. {{ next_t.title }}</span>{% icon 'arrowRight' 18 %}</a>{% endif %}
+  </nav>
+</article>
+{% endblock %}

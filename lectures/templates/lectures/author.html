@@ -1,0 +1,36 @@
+{% extends 'lectures/base.html' %}
+{% load static lecture_tags %}
+{% block edit %}{% url 'studio:settings' course.slug %}{% endblock %}
+{% block title %}Muallif — {{ course.author }}{% endblock %}
+{% block view %}muallif{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Muallif haqida</span>{% endblock %}
+{% block content %}
+<section class="view author">
+  <div class="author-grid">
+    <div class="author-photo rv" style="{{ 0|delay }}" data-tilt>
+      <div class="portrait-frame big">{% if course.author_photo %}<img src="{{ course.author_photo.url }}" alt="{{ course.author }}">{% else %}<div class="portrait-empty">{% icon 'user' 120 %}</div>{% endif %}</div>
+    </div>
+    <div>
+      <div class="eyebrow rv" style="{{ 1|delay }}"><span class="dot"></span>Muallif</div>
+      <h1 class="rv" style="{{ 2|delay }}">{{ course.author }}</h1>
+      <p class="role rv" style="{{ 3|delay }}">{{ course.author_role }}{% if course.college %} · {{ course.college }}{% endif %}</p>
+      <div class="facts">
+        <div class="fact-row glass rv" style="{{ 4|delay }}">{% icon 'book' 20 %}<div><small>Darslik</small><b>{% firstof course.module course.title %}</b></div></div>
+        {% if course.direction %}<div class="fact-row glass rv" style="{{ 5|delay }}">{% icon 'graduation' 20 %}<div><small>Ta’lim yo‘nalishi</small><b>{{ course.direction }}</b></div></div>{% endif %}
+        {% if course.hours_total %}<div class="fact-row glass rv" style="{{ 6|delay }}">{% icon 'layers' 20 %}<div><small>Hajmi</small><b>{{ course.hours_total }} soat (nazariy — {{ course.hours_theory }}, amaliy — {{ course.hours_practice }}, mustaqil — {{ course.hours_self }})</b></div></div>{% endif %}
+        <div class="fact-row glass rv" style="{{ 7|delay }}">{% icon 'list' 20 %}<div><small>Mavzular</small><b>{{ all_topics|length }} ta mavzu</b></div></div>
+      </div>
+      <div class="kicker rv" style="{{ 8|delay }}">{% icon 'sparkles' 16 %} Elektron darslik imkoniyatlari</div>
+      <ul class="features rv" style="{{ 9|delay }}">
+        <li>Har bir mavzu slaydlarga bo‘lingan: kirish, reja bo‘limlari, test, mustaqil ta’lim</li>
+        <li>Qisqa bayon + «Qo‘shimcha ma’lumot» tugmasi orqali to‘liq matn</li>
+        <li>Har bir mavzu uchun jonli 3D ko‘rgazma</li>
+        <li>Interaktiv testlar va yakuniy nazorat</li>
+        <li>Internetsiz ishlaydigan nusxa (fleshka yoki diskdan)</li>
+      </ul>
+      {% with first=all_topics.0 %}{% if first %}<div class="btn-row rv" style="{{ 10|delay }}"><a class="btn primary" href="{% url 'lectures:slide' course.slug first.number 0 %}">{% icon 'play' 18 %} Darsni boshlash</a></div>{% endif %}{% endwith %}
+    </div>
+  </div>
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

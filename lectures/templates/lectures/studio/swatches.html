@@ -1,0 +1,12 @@
+{# Koshin ranglaridan tanlash: f — forma maydoni, palette — [(rang, nom)] #}
+<div class="field">
+  <label>{{ f.label }}</label>
+  <div class="swatches">
+    {% for val, name in palette %}
+    <label class="swatch" style="--c:{{ val }}" title="{{ name }}">
+      <input type="radio" name="{{ f.html_name }}" value="{{ val }}" {% if f.value == val %}checked{% endif %}>
+      <span></span><small>{{ name }}</small>
+    </label>
+    {% endfor %}
+  </div>
+</div>

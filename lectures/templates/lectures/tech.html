@@ -1,0 +1,44 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block edit %}{% url 'studio:materials' course.slug %}?kind=tech{% endblock %}
+{% block title %}Fanning ta’lim texnologiyasi — {{ course.title }}{% endblock %}
+{% block view %}texnologiya{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Ta’lim texnologiyasi</span>{% endblock %}
+{% block content %}
+<section class="view">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>Fanning ta’lim texnologiyasi</div>
+    <h1>Ta’lim texnologiyalari</h1><p class="muted">Har bir mashg‘ulotning ta’lim texnologiyasi modeli va texnologik xaritasi.</p></div></div>
+
+  {% if docs %}
+  <h2 class="res-group">{% icon 'file' 20 %} Hujjatlar</h2>
+  <div class="res-grid">{% for x in docs %}{% include 'lectures/partials/resource.html' with embed=True %}{% endfor %}</div>
+  {% endif %}
+
+  {% if has_models %}
+  <div class="tbl-wrap tech-table rv"><table>
+    <thead><tr><th>№</th><th>Mavzu</th>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+    <tbody>{% for r in rows %}<tr style="--g:{{ r.t.color }}">
+      <td><b class="num">{{ r.t.number }}</b></td><td><a class="row-link" href="#tx{{ r.t.number }}">{{ r.t.title }}</a></td>
+      {% for v in r.vals %}<td>{{ v|safe }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+  </table></div>
+
+  <h2 class="res-group">{% icon 'layers' 20 %} Mavzular bo‘yicha batafsil</h2>
+  <div class="tech-list">
+    {% for r in rows %}{% if r.t.lesson_model %}
+    <details class="tech-item" id="tx{{ r.t.number }}" style="--g:{{ r.t.color }}">
+      <summary><span class="res-num">{{ r.t.number }}</span><b>{{ r.t.title }}</b>{% icon 'chevronDown' 18 %}</summary>
+      <div class="rich">
+        <h4>Ta’lim texnologiyasi modeli</h4>
+        {% include 'lectures/partials/table.html' with rows=r.t.lesson_model cls='' %}
+        {% if r.t.tech_map %}<h4>Texnologik xarita</h4>{% include 'lectures/partials/table.html' with rows=r.t.tech_map cls='xarita' %}{% endif %}
+      </div>
+    </details>
+    {% endif %}{% endfor %}
+  </div>
+  {% elif not docs %}
+  <div class="empty-state"><span class="empty-ic">{% icon 'layers' 40 %}</span><h3>Hozircha texnologiyalar yo‘q</h3>
+    <p class="muted">Studiyada «Materiallar» bo‘limiga «Ta’lim texnologiyasi» turidagi hujjat yuklang.</p></div>
+  {% endif %}
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

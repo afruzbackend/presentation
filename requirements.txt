@@ -1,0 +1,3 @@
+# Python 3.11-3.13: Django 5.1+ yetarli; Python 3.14 uchun pip o'z-o'zidan 6.x ni tanlaydi
+Django>=5.1,<7
+djangorestframework>=3.15

@@ -1,0 +1,43 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><span>{{ course.title }}</span>{% endblock %}
+{% block content %}
+<div class="st-grid">
+  <section>
+    <h2 class="st-h2">Mavzular <small>{{ topics|length }} ta</small></h2>
+    <div class="st-list">
+      {% for t in topics %}
+      <div class="st-row" id="t{{ t.pk }}" style="--g:{{ t.color }}">
+        <span class="st-num">{{ t.number }}</span>
+        <a class="st-row-main" href="{% url 'studio:topic' course.slug t.number %}">
+          <b>{{ t.title }}</b>
+          <small><span class="badge {% if t.kind == 'Nazariy' %}nz{% else %}am{% endif %}">{{ t.kind }}</span>
+            {% if t.part %}{{ t.part.name }} · {% endif %}{{ t.n_sec }} reja · {{ t.n_test }} test · {% icon t.scene|scene_icon 13 %}</small>
+        </a>
+        <div class="st-acts">
+          <form method="post" action="{% url 'studio:topic_move' course.slug t.number 'up' %}">{% csrf_token %}<button class="act" title="Yuqoriga" {% if forloop.first %}disabled{% endif %}>↑</button></form>
+          <form method="post" action="{% url 'studio:topic_move' course.slug t.number 'down' %}">{% csrf_token %}<button class="act" title="Pastga" {% if forloop.last %}disabled{% endif %}>↓</button></form>
+          <a class="act" href="{% url 'lectures:slide' course.slug t.number 0 %}" target="_blank" title="Ko‘rish">{% icon 'play' 14 %}</a>
+          <a class="act danger" href="{% url 'studio:topic_delete' course.slug t.number %}" title="O‘chirish">{% icon 'close' 14 %}</a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="st-empty">{% icon 'list' 36 %}<h3>Mavzu yo‘q</h3><p class="muted">O‘ng tomondagi forma orqali birinchi mavzuni qo‘shing.</p></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <aside>
+    <form method="post" class="st-card sticky">
+      {% csrf_token %}
+      <h3>{% icon 'plus' 18 %} Yangi mavzu</h3>
+      {% include 'lectures/studio/field.html' with f=form.title %}
+      {% include 'lectures/studio/field.html' with f=form.kind %}
+      {% include 'lectures/studio/field.html' with f=form.part %}
+      <button class="btn primary wide-btn">{% icon 'plus' 18 %} Qo‘shish</button>
+      <p class="help">Mavzu oxiriga qo‘shiladi. Tartibni ↑ ↓ tugmalari bilan o‘zgartirasiz. 3D ko‘rgazma mavzu nomiga qarab avtomatik tanlanadi.</p>
+    </form>
+  </aside>
+</div>
+{% endblock %}

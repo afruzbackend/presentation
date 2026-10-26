@@ -1,0 +1,53 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block edit %}{% url 'studio:materials' course.slug %}{% endblock %}
+{% block title %}{{ page_title }} — {{ course.title }}{% endblock %}
+{% block view %}resurs{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>{{ page_title }}</span>{% endblock %}
+{% block content %}
+<section class="view">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>{{ page_title }}</div>
+    <h1>{{ page_title }}</h1><p class="muted">{{ lead }} Jami: {{ count }} ta.</p></div></div>
+
+  {% if kind == 'video' and user.is_authenticated and not exporting %}
+  <form class="quick-add" id="qoshish" method="post" enctype="multipart/form-data" action="{% url 'studio:video_add' course.slug %}">
+    {% csrf_token %}
+    <input type="hidden" name="kind" value="video">
+    <div class="qa-head">{% icon 'plus' 20 %}<b>Video qo‘shish</b><small>Faylni tanlang yoki YouTube havolasini qo‘ying</small></div>
+    <label class="drop">
+      <input type="file" name="file" accept="video/mp4,video/webm,video/ogg">
+      <span class="drop-ic">{% icon 'video' 30 %}</span>
+      <span class="drop-t"><b>Video faylni tanlash</b><small>MP4 — internetsiz ishlaydi</small></span>
+    </label>
+    <div class="qa-or">yoki</div>
+    <div class="qa-fields">
+      <input type="url" name="url" placeholder="https://youtu.be/...  — YouTube havolasi">
+      <input type="text" name="title" placeholder="Video nomi (ixtiyoriy)">
+      <select name="topic"><option value="">— butun darslik uchun —</option>{% for t in all_topics %}<option value="{{ t.pk }}">{{ t.number }}. {{ t.title|truncatechars:60 }}</option>{% endfor %}</select>
+      <button class="btn primary">{% icon 'check' 18 %} Joylash</button>
+    </div>
+  </form>
+  {% endif %}
+
+  {% if general %}
+  <h2 class="res-group">{% icon page_icon 20 %} Umumiy</h2>
+  <div class="res-grid">{% for x in general %}{% include 'lectures/partials/resource.html' with embed=True %}{% endfor %}</div>
+  {% endif %}
+
+  {% for t, items in by_topic %}
+  <h2 class="res-group" style="--g:{{ t.color }}"><span class="res-num">{{ t.number }}</span> {{ t.title }}
+    <a class="link" href="{% url 'lectures:slide' course.slug t.number 0 %}">mavzuga o‘tish →</a></h2>
+  <div class="res-grid">{% for x in items %}{% include 'lectures/partials/resource.html' with embed=True %}{% endfor %}</div>
+  {% endfor %}
+
+  {% if not count %}
+  <div class="empty-state">
+    <span class="empty-ic">{% icon page_icon 40 %}</span>
+    <h3>Hozircha {{ page_title|lower }} yo‘q</h3>
+    <p class="muted">Ustoz ularni Studiyada — mavzu sahifasidagi «Taqdimot, video, materiallar» bo‘limida yuklaydi.</p>
+    {% if not exporting %}<a class="btn primary" href="{% url 'studio:course' course.slug %}">{% icon 'pen' 18 %} Studiyada qo‘shish</a>{% endif %}
+  </div>
+  {% endif %}
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

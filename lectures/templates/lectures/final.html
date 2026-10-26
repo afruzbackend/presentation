@@ -1,0 +1,24 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block title %}Yakuniy test — {{ course.title }}{% endblock %}
+{% block view %}test{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Yakuniy test</span>{% endblock %}
+{% block content %}
+<section class="view final">
+  <div class="final-grid">
+    <div class="final-side">
+      <div class="eyebrow"><span class="dot"></span>Yakuniy nazorat</div>
+      <h1>Yakuniy test</h1>
+      <p class="muted">Barcha mavzular bo‘yicha {{ total_bank }} ta savoldan tasodifiy {% if exporting %}{{ pick }}{% else %}{{ rows|length }}{% endif %} tasi tanlanadi.
+        Har bir to‘g‘ri javob — 1 ball. 86% va undan yuqori — «5», 71% — «4», 56% — «3».</p>
+      {% if not exporting %}<a class="btn ghost" href="{% url 'lectures:final' course.slug %}?new=1">{% icon 'refresh' 18 %} Yangi savollar</a>{% endif %}
+      <div id="sceneSlot">{% scene 'chip' %}</div>
+    </div>
+    {% if rows %}
+    {% url 'lectures:final' course.slug as again %}
+    {% include 'lectures/partials/quiz.html' with title='Yakuniy test' again=again|add:'?new=1' show_topic=True %}
+    {% else %}<p class="muted">Bu darslikda hali test savollari yo‘q.</p>{% endif %}
+  </div>
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

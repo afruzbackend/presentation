@@ -1,0 +1,24 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block title %}Ma’ruza matni — {{ course.title }}{% endblock %}
+{% block view %}maruza{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Ma’ruza matni</span>{% endblock %}
+{% block content %}
+<section class="view">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>Ma’ruza matni</div>
+    <h1>Ma’ruzalar to‘plami</h1><p class="muted">Har bir mavzuning to‘liq matni — o‘qish va chop etish uchun.</p></div></div>
+  <ol class="toc-list">
+    {% for t in topics %}
+    <li class="rv" style="{{ forloop.counter0|delay }};--g:{{ t.color }}">
+      <a href="{% url 'lectures:lecture_text' course.slug t.number %}">
+        <span class="toc-n">{{ t.number|pad2 }}</span>
+        <span class="toc-t"><b>{{ t.title }}</b><small>{% for s in t.sections.all %}{{ forloop.counter }}. {{ s.title }}{% if not forloop.last %} · {% endif %}{% endfor %}</small></span>
+        <span class="badge {% if t.kind == 'Nazariy' %}nz{% else %}am{% endif %}">{{ t.kind }}</span>
+        {% icon 'arrowRight' 18 %}
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block title %}Mustaqil ta’lim — {{ course.title }}{% endblock %}
+{% block view %}mustaqil{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Mustaqil ta’lim</span>{% endblock %}
+{% block content %}
+<section class="view selfplan">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>Mustaqil ta’lim</div>
+    <h1>Mustaqil ta’lim mavzulari</h1><p class="muted">{% if course.hours_self %}Ishchi dastur bo‘yicha — jami {{ course.hours_self }} soat{% else %}Har bir mavzu bo‘yicha topshiriqlar{% endif %}</p></div></div>
+  <div class="self-grid">
+    {% for it in items %}
+    <div class="self-card rv" style="{{ forloop.counter0|delay }};--g:{{ it.color }}" data-tilt>
+      <span class="self-n">{{ it.n|pad2 }}</span>
+      <b>{{ it.title }}</b>
+      <div class="self-meta"><span>{% if it.hours %}{% icon 'clock' 14 %} {{ it.hours }} soat{% endif %}</span>
+        <span class="links">{% for k in it.topics %}<a href="{% url 'lectures:topic' course.slug k %}">{{ k }}</a>{% endfor %}</span></div>
+    </div>
+    {% empty %}<p class="muted">Hozircha topshiriqlar yo‘q.</p>
+    {% endfor %}
+  </div>
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

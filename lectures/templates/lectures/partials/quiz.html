@@ -1,0 +1,37 @@
+{% load lecture_tags %}{# Test: odatda forma serverga yuboriladi (Python tekshiradi); eksportda offline.js tekshiradi #}
+<form class="quiz glass rv" method="post" style="{{ 2|delay }}"{% if exporting %} data-offline data-s="{{ salt }}"{% if pick %} data-pick="{{ pick }}"{% endif %}{% endif %}>
+  {% csrf_token %}
+  <div class="quiz-head"><span>{{ title }}</span><b data-count>{% if exporting and pick %}{{ pick }}{% else %}{{ rows|length }}{% endif %} ta savol</b></div>
+
+  {% if res %}
+  <div class="result-box">
+    <div class="ring-score" style="--p:{{ res.percent }}"><b>{{ res.percent }}%</b><small>{{ res.score }} / {{ res.total }}</small></div>
+    <h3>Baho: <span class="grade g{{ res.grade }}">{{ res.grade }}</span></h3>
+    <p>{{ res.message }}</p>
+    {% if review %}<div class="wrong-list"><small>Takrorlash uchun mavzular:</small>
+      {% for n in review %}<a href="{% url 'lectures:slide' course.slug n 0 %}">{{ n }}-mavzu</a>{% endfor %}</div>{% endif %}
+    <a class="btn primary" href="{{ again }}">{% icon 'refresh' 18 %} Qayta topshirish</a>
+  </div>
+  {% endif %}
+
+  {% for row in rows %}
+  <fieldset class="qblock {% if res %}{% if row.ok %}is-ok{% else %}is-bad{% endif %}{% endif %}"{% if exporting %} data-h="{{ row.q|answer_hash:salt }}" data-topic="{{ row.q.topic.number }}"{% endif %}>
+    {% if show_topic %}<a class="quiz-topic" href="{% url 'lectures:slide' course.slug row.q.topic.number 0 %}">{{ row.q.topic.number }}-mavzu: {{ row.q.topic.title }}</a>{% endif %}
+    <legend class="quiz-q"><span class="qn">{{ forloop.counter }}</span>{{ row.q.text }}</legend>
+    <div class="opts">
+      {% for o in row.q.options %}
+      <label class="opt{% if res %}{% if forloop.counter0 == row.q.answer %} right{% elif forloop.counter0 == row.chosen %} wrong{% endif %}{% endif %}">
+        <input type="radio" name="q{{ row.q.pk }}" value="{{ forloop.counter0 }}" required
+               {% if row.chosen == forloop.counter0 %}checked{% endif %} {% if res %}disabled{% endif %}>
+        <i>{{ forloop.counter0|letter }}</i><span>{{ o }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+  {% endfor %}
+
+  {% if not res %}
+  <div class="quiz-foot"><span class="muted">Barcha savollarga javob bering</span>
+    <button class="btn primary" type="submit">{% icon 'check' 18 %} Javoblarni tekshirish</button></div>
+  {% endif %}
+</form>

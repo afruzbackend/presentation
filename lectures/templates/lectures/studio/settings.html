@@ -1,0 +1,42 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Ma’lumotlar — {{ course.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><span>Ma’lumotlar</span>{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="st-grid">
+  {% csrf_token %}
+  <section class="st-card">
+    <h3>{% icon 'book' 18 %} Darslik</h3>
+    <div class="st-fields">
+      {% include 'lectures/studio/field.html' with f=form.title wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.subtitle wide=True %}
+      {% include 'lectures/studio/field.html' with f=form.module %}
+      {% include 'lectures/studio/field.html' with f=form.direction %}
+      {% include 'lectures/studio/field.html' with f=form.college wide=True %}
+    </div>
+    <h3>{% icon 'clock' 18 %} Soatlar va test</h3>
+    <div class="st-fields four">
+      {% include 'lectures/studio/field.html' with f=form.hours_theory %}
+      {% include 'lectures/studio/field.html' with f=form.hours_practice %}
+      {% include 'lectures/studio/field.html' with f=form.hours_self %}
+      {% include 'lectures/studio/field.html' with f=form.final_size %}
+    </div>
+    {% include 'lectures/studio/swatches.html' with f=form.color %}
+  </section>
+
+  <aside class="st-card">
+    <h3>{% icon 'user' 18 %} Muallif</h3>
+    <div class="st-photo">
+      {% if course.author_photo %}<img src="{{ course.author_photo.url }}" alt="{{ course.author }}">{% else %}<span>{% icon 'user' 60 %}</span>{% endif %}
+    </div>
+    {% include 'lectures/studio/field.html' with f=form.author %}
+    {% include 'lectures/studio/field.html' with f=form.author_role %}
+    {% include 'lectures/studio/field.html' with f=form.author_photo %}
+    <h3>{% icon 'monitor' 18 %} Bosh sahifa fon rasmi</h3>
+    {% if course.cover_image %}<img class="st-cover" src="{{ course.cover_image.url }}" alt="">{% endif %}
+    {% include 'lectures/studio/field.html' with f=form.cover_image %}
+    <button class="btn primary wide-btn">{% icon 'check' 18 %} Saqlash</button>
+    <a class="st-danger-link" href="{% url 'studio:course_delete' course.slug %}">{% icon 'close' 14 %} Darslikni o‘chirish</a>
+  </aside>
+</form>
+{% endblock %}

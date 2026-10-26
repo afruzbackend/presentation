@@ -1,0 +1,19 @@
+{% load lecture_tags %}{# CSS :target orqali ochiladigan yon oyna. kind: blocks | table | model | list #}
+<aside class="drawer" id="{{ id }}">
+  <a class="overlay-close" href="#yopish" aria-label="Yopish"></a>
+  <div class="drawer-panel">
+    <header class="drawer-head">
+      <div><small>{{ kicker }}</small><h3>{{ title }}</h3></div>
+      <a class="icon-btn" href="#yopish" title="Yopish">{% icon 'close' %}</a>
+    </header>
+    <div class="drawer-body rich">
+      {% if kind == 'blocks' %}{% include 'lectures/partials/blocks.html' with blocks=data prefix=id %}
+      {% elif kind == 'table' %}{% include 'lectures/partials/table.html' with rows=data cls='' %}
+      {% elif kind == 'model' %}{% include 'lectures/partials/table.html' with rows=data cls='' %}
+        <h4>O‘quv mashg‘ulotining texnologik xaritasi</h4>
+        {% include 'lectures/partials/table.html' with rows=extra cls='xarita' %}
+      {% elif kind == 'list' %}<ol class="drawer-q">{% for q in data %}<li>{{ q }}</li>{% endfor %}</ol>
+      {% endif %}
+    </div>
+  </div>
+</aside>

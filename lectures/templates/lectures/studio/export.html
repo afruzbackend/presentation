@@ -1,0 +1,34 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Eksport — {{ course.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><span>Eksport</span>{% endblock %}
+{% block content %}
+<div class="st-grid">
+  <section class="st-card st-export">
+    <div class="st-export-ic">{% icon 'file' 40 %}</div>
+    <h2>Internetsiz ishlaydigan nusxa</h2>
+    <p>Darslik bitta <b>ZIP</b> faylga yig‘iladi. Uni ochib, ichidagi <b>Ochish.bat</b> ni ikki marta bossangiz —
+      darslik istalgan kompyuterda ochiladi: <b>Python ham, internet ham kerak emas</b>.</p>
+    <ul class="features">
+      <li>Barcha mavzular, slaydlar, 3D ko‘rgazmalar va rasmlar</li>
+      <li>Testlar ishlaydi va baholanadi (brauzerning o‘zida), to‘g‘ri javoblar sahifa kodida ochiq turmaydi</li>
+      <li>YouTube videolari darslik ichida ijro etiladi (videoni ko‘rish uchun internet kerak)</li>
+      <li>Fleshka yoki diskka yozish mumkin — <code>autorun.inf</code> ham qo‘shiladi</li>
+      <li>O‘quvchilarga Telegram orqali ham yuborish mumkin</li>
+    </ul>
+    <form method="post">{% csrf_token %}
+      <button class="btn primary">{% icon 'file' 18 %} ZIP faylni yuklab olish</button>
+    </form>
+  </section>
+  <aside class="st-card st-howto">
+    <h3>{% icon 'info' 18 %} Yo‘riqnoma</h3>
+    <ol>
+      <li>«ZIP faylni yuklab olish» tugmasini bosing.</li>
+      <li>Yuklangan faylni o‘ng tugma bilan bosib, <b>«Hammasini chiqarish»</b> (Extract all) ni tanlang.</li>
+      <li>Ochilgan papkadagi <b>Ochish.bat</b> ni ikki marta bosing (qora oynani darslik bilan ishlab bo‘lguncha yopmang).</li>
+      <li>Fleshkaga yozish uchun papkani butunligicha nusxalang.</li>
+    </ol>
+    <p class="help">Darslikni o‘zgartirsangiz, eksportni qaytadan bajaring — eski nusxa avtomatik yangilanmaydi.</p>
+  </aside>
+</div>
+{% endblock %}

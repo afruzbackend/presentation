@@ -1,0 +1,34 @@
+{% extends 'lectures/base.html' %}
+{% load lecture_tags %}
+{% block edit %}{% url 'studio:glossary' course.slug %}{% endblock %}
+{% block title %}Glossariy — {{ course.title }}{% endblock %}
+{% block view %}glossariy{% endblock %}
+{% block crumbs %}<a href="{% url 'lectures:course' course.slug %}">Bosh sahifa</a><i></i><span>Glossariy</span>{% endblock %}
+{% block content %}
+<section class="view">
+  <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>Glossariy</div>
+    <h1>Atamalar lug‘ati</h1><p class="muted">{{ total }} ta atama{% if harf or q %} · topildi: {{ terms|length }} · <a class="link" href="{% url 'lectures:glossary' course.slug %}">hammasi</a>{% endif %}</p></div>
+    {% if not exporting %}
+    <form class="filters" method="get"><label class="search">{% icon 'search' 18 %}<input name="q" value="{{ q }}" placeholder="Atamani qidirish…"></label></form>
+    {% endif %}
+  </div>
+
+  {% if not exporting %}
+  <nav class="alpha">{% for l in letters %}<a href="?harf={{ l|urlencode }}" class="{% if l == harf %}on{% endif %}">{{ l }}</a>{% endfor %}</nav>
+  {% else %}
+  <nav class="alpha">{% for l in letters %}<a href="#h-{{ l }}">{{ l }}</a>{% endfor %}</nav>
+  {% endif %}
+
+  <dl class="gloss">
+    {% for g in terms %}
+    {% ifchanged g.letter %}<div class="gloss-letter" id="h-{{ g.letter }}">{{ g.letter }}</div>{% endifchanged %}
+    <div class="gloss-item">
+      <dt>{{ g.term }}</dt>
+      <dd>{{ g.definition }}{% if g.topic %} <a class="gloss-src" href="{% url 'lectures:slide' course.slug g.topic.number 0 %}">{{ g.topic.number }}-mavzu</a>{% endif %}</dd>
+    </div>
+    {% empty %}<p class="muted">Hech narsa topilmadi.</p>
+    {% endfor %}
+  </dl>
+  {% include 'lectures/partials/footer.html' %}
+</section>
+{% endblock %}

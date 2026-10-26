@@ -1,0 +1,40 @@
+{% extends 'lectures/studio/base.html' %}
+{% load lecture_tags %}
+{% block title %}Bo‘limlar — {{ course.title }}{% endblock %}
+{% block crumbs %}<a href="{% url 'studio:dashboard' %}">Darsliklarim</a><i></i><a href="{% url 'studio:course' course.slug %}">{{ course.title }}</a><i></i><span>Bo‘limlar</span>{% endblock %}
+{% block content %}
+<div class="st-grid">
+  <section>
+    <h2 class="st-h2">Bo‘limlar <small>mavzular guruhlari</small></h2>
+    <p class="muted">Bo‘lim — bir nechta mavzuni birlashtiradi (masalan, «Operatsion tizimlar»). Uning rangi va belgisi mavzu sahifalarida ishlatiladi.
+      Mavzuni bo‘limga mavzu sahifasidagi «Asosiy» bo‘limida biriktirasiz.</p>
+    {% for p, pf in items %}
+    <form method="post" action="{% url 'studio:part_save' course.slug p.pk %}" class="st-card st-part" style="--g:{{ p.color }}">
+      {% csrf_token %}
+      <div class="st-part-head"><span class="group-ic">{% icon p.icon 20 %}</span><b>{{ p.name }}</b><small>{{ p.n }} ta mavzu</small></div>
+      <div class="st-fields">
+        {% include 'lectures/studio/field.html' with f=pf.name %}
+        {% include 'lectures/studio/field.html' with f=pf.icon %}
+      </div>
+      {% include 'lectures/studio/swatches.html' with f=pf.color %}
+      <div class="btn-row">
+        <button class="btn primary sm">{% icon 'check' 16 %} Saqlash</button>
+        <button class="btn ghost sm danger" name="delete" value="1">{% icon 'close' 16 %} O‘chirish</button>
+      </div>
+    </form>
+    {% empty %}
+    <div class="st-empty">{% icon 'layers' 36 %}<h3>Bo‘lim yo‘q</h3><p class="muted">Bo‘limsiz ham ishlaydi — barcha mavzular bitta ro‘yxatda chiqadi.</p></div>
+    {% endfor %}
+  </section>
+  <aside>
+    <form method="post" class="st-card sticky">
+      {% csrf_token %}
+      <h3>{% icon 'plus' 18 %} Yangi bo‘lim</h3>
+      {% include 'lectures/studio/field.html' with f=form.name %}
+      {% include 'lectures/studio/field.html' with f=form.icon %}
+      {% include 'lectures/studio/swatches.html' with f=form.color %}
+      <button class="btn primary wide-btn">{% icon 'plus' 18 %} Qo‘shish</button>
+    </form>
+  </aside>
+</div>
+{% endblock %}
