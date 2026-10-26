@@ -155,3 +155,6 @@ LOGIN_REDIRECT_URL = 'studio:dashboard'
 # YouTube pleyeri sayt manzilini (faqat domenini) talab qiladi, aks holda "Xato 153" chiqadi.
 # Django standarti 'same-origin' boshqa saytlarga hech narsa yubormaydi.
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# PDF taqdimotlar sahifa ichida (iframe) ko'rinishi uchun: o'z saytimizga ruxsat, begona saytlarga — yo'q
+X_FRAME_OPTIONS = 'SAMEORIGIN'

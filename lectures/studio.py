@@ -547,6 +547,22 @@ def qa_action(request, course, n, action, pk=None):
     return redirect(topic_url(topic, 'savoljavob'))
 
 
+@studio_view
+@require_POST
+def topic_slides(request, course, n):
+    """Mavzu matnidan taqdimot (PDF + PowerPoint) tayyorlash — eski avtomatik nusxa almashtiriladi."""
+    from .taqdimot import FontMissing, make_for_topic
+    topic = get_topic(course, n)
+    try:
+        made = make_for_topic(topic)
+    except FontMissing as e:
+        messages.error(request, f'Taqdimot tayyorlanmadi: {e}')
+    else:
+        messages.success(request, f'Taqdimot tayyor: {made} ta slayd (PDF va PowerPoint).')
+    touch(course)
+    return redirect(topic_url(topic, 'resurslar'))
+
+
 # ------------------------------------------------------------------ glossariy
 @studio_view
 def glossary(request, course):

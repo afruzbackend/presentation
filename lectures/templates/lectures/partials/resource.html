@@ -13,7 +13,7 @@
     {% elif x.is_image %}<img class="res-img" src="{{ x.file.url }}" alt="{{ x.title }}" loading="lazy">
     {% elif x.url|youtube %}{% yt_player x.url x.title %}
     {% elif x.ext == 'pptx' or x.ext == 'ppt' %}<div class="res-office">{% icon 'monitor' 34 %}<p><b>PowerPoint taqdimoti.</b> «{{ x.ext|upper }}» tugmasini bosing — fayl PowerPoint dasturida ochiladi.
-      Brauzerning o‘zida ko‘rsatish uchun taqdimotni PDF qilib ham yuklang.</p></div>
+      {% if user.is_authenticated and not exporting %}Brauzerning o‘zida ko‘rsatish uchun taqdimotni PDF qilib ham yuklang.{% endif %}</p></div>
     {% endif %}
   {% endif %}
 </article>

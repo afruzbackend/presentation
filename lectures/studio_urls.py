@@ -43,5 +43,6 @@ urlpatterns = [
     path(T + 'test/<int:qid>/ochirish/', v.test_delete, name='test_delete'),
     path(T + 'savol-javob/<int:pk>/', v.qa_edit, name='qa'),
     path(T + 'savol-javob/<str:action>/', v.qa_action, name='qa_action'),
+    path(T + 'taqdimot/', v.topic_slides, name='topic_slides'),
     path(T + 'savol-javob/<int:pk>/<str:action>/', v.qa_action, name='qa_item_action'),
 ]

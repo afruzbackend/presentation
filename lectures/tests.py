@@ -277,6 +277,18 @@ class SectionsTests(BaseCase):
         self.client.post(f'/studio/d/kompyuter-tizimlari/resurs/{res.pk}/ochirish/')
         self.assertFalse(topic.resources.filter(kind='slides').exists())
 
+    def test_auto_presentation(self):
+        self.login()
+        url = '/studio/d/kompyuter-tizimlari/mavzu/5/taqdimot/'
+        self.client.post(url)
+        self.client.post(url)  # qayta bosilsa — almashtiriladi, ko'paymaydi
+        topic = self.course.topics.get(number=5)
+        files = sorted(x.ext for x in topic.resources.filter(kind='slides'))
+        self.assertEqual(files, ['pdf', 'pptx'])
+        pdf = topic.resources.get(kind='slides', file__endswith='.pdf')
+        self.assertTrue(pdf.file.read(5) == b'%PDF-')
+        self.assertContains(self.client.get('/d/kompyuter-tizimlari/taqdimotlar/'), 'res-frame')
+
     def test_qa_and_glossary_editing(self):
         self.login()
         t = '/studio/d/kompyuter-tizimlari/mavzu/1/'

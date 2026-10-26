@@ -117,6 +117,14 @@
           ular mavzuda alohida slayd bo‘lib chiqadi.</p></div>
       {% endfor %}
     </div>
+    <form method="post" action="{% url 'studio:topic_slides' course.slug t.number %}" class="st-help" style="margin-top:18px">
+      {% csrf_token %}
+      <h3>{% icon 'monitor' 18 %} Taqdimotni matndan tayyorlash</h3>
+      <p class="muted">Mavzu matni, rejasi, jadvallari, atamalari va savollaridan Samarqand uslubidagi taqdimot tuziladi:
+        <b>PDF</b> (saytda ko‘rinadi) va <b>PowerPoint</b> (darsda ko‘rsatish va tahrirlash uchun).
+        Matnni o‘zgartirsangiz — tugmani qayta bosing. O‘zingiz yuklagan taqdimotlarga tegilmaydi.</p>
+      <button class="btn primary">{% icon 'refresh' 18 %} Taqdimotni tayyorlash</button>
+    </form>
   </section>
   <aside>
     <form method="post" enctype="multipart/form-data" class="st-card sticky">
