@@ -6,6 +6,7 @@ Natija: index.html ni ikki marta bosish kifoya — Python ham, internet ham kera
 import io
 import re
 import secrets
+import shutil
 import zipfile
 from pathlib import Path
 
@@ -101,32 +102,41 @@ class Rewriter:
         return ATTR_RX.sub(lambda m: f'{m.group(1)}="{self.target(m.group(2))}"', html)
 
 
-def build_zip(course):
+def site_files(course):
+    """Darslikning statik nusxasi: [(nisbiy yo'l, matn | fayl yo'li)] — ZIP ham, Netlify sayti ham shundan."""
     pages = page_map(course)
     client = Client(HTTP_X_DARSLIK_EXPORT='1', HTTP_X_DARSLIK_SALT=secrets.token_hex(4))
     rw = Rewriter(pages)
-    rendered = {}
+    files = []
+    done = set()
     for url, name in pages.items():
-        if name in rendered:
+        if name in done:
             continue
         resp = client.get(url)
         if resp.status_code != 200:
             continue
-        rendered[name] = rw(resp.content.decode('utf-8'))
+        done.add(name)
+        files.append((name, rw(resp.content.decode('utf-8'))))
+    for rel in sorted(rw.static | {'lectures/js/offline.js', 'lectures/js/ui.js'}):
+        found = finders.find(rel)
+        if found:
+            files.append((f'static/{rel}', Path(found)))
+    for rel in sorted(rw.media):
+        p = Path(settings.MEDIA_ROOT) / rel
+        if p.is_file():
+            files.append((f'media/{rel}', p))
+    return files
 
+
+def build_zip(course):
     root = course.slug
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, 'w', zipfile.ZIP_DEFLATED) as z:
-        for name, html in rendered.items():
-            z.writestr(f'{root}/{name}', html)
-        for rel in sorted(rw.static | {'lectures/js/offline.js', 'lectures/js/ui.js'}):
-            found = finders.find(rel)
-            if found:
-                z.write(found, f'{root}/static/{rel}')
-        for rel in sorted(rw.media):
-            p = Path(settings.MEDIA_ROOT) / rel
-            if p.is_file():
-                z.write(p, f'{root}/media/{rel}')
+        for name, data in site_files(course):
+            if isinstance(data, Path):
+                z.write(data, f'{root}/{name}')
+            else:
+                z.writestr(f'{root}/{name}', data)
         z.writestr(f'{root}/O‘QING.txt', README.format(
             title=course.title, line='=' * len(course.title), author=course.author,
             date=timezone.localdate().strftime('%d.%m.%Y')).replace('\n', '\r\n'))
@@ -134,3 +144,20 @@ def build_zip(course):
         for f in EXTRA.iterdir():  # Ochish.bat + server.ps1: videolar ichida ko'rinishi uchun
             z.writestr(f'{root}/{f.name}', '\r\n'.join(f.read_text(encoding='utf-8').splitlines()) + '\r\n')
     return buf.getvalue(), f'{root}-oflayn.zip'
+
+
+def write_site(course, out_dir):
+    """Internetga joylash uchun (Netlify, GitHub Pages...): darslik papkaga yoziladi, index.html — bosh sahifa."""
+    out = Path(out_dir)
+    if out.exists():
+        shutil.rmtree(out)
+    n = 0
+    for name, data in site_files(course):
+        target = out / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(data, Path):
+            shutil.copyfile(data, target)
+        else:
+            target.write_text(data, encoding='utf-8')
+        n += 1
+    return n

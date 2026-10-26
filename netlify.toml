@@ -1,0 +1,8 @@
+# Netlify: tayyor statik sayt «sayt/» papkasidan joylanadi (Django serveri kerak emas).
+# Saytni yangilash: python manage.py sayt_yasash  ->  git commit  ->  git push
+[build]
+  publish = "sayt"
+  command = "echo 'sayt/ papkasi tayyor'"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"

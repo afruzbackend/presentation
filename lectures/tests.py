@@ -179,6 +179,14 @@ class StudioTests(BaseCase):
         self.assertNotIn('data-a=', quiz)  # to'g'ri javob ochiq yozilmaydi
         self.assertIn('data-h=', quiz)
 
+    def test_static_site_for_netlify(self):
+        from .export import write_site
+        out = Path(TMP_MEDIA) / 'sayt'
+        write_site(self.course, out)
+        self.assertTrue((out / 'index.html').exists())
+        self.assertTrue((out / 'static/lectures/js/offline.js').exists())
+        self.assertNotIn('Ochish.bat', [f.name for f in out.iterdir()])  # faqat ZIP uchun
+
     def test_export_video_plays_inside(self):
         self.login()
         self.course.topics.get(number=2).resources.create(course=self.course, kind='video', title='Dars', url='https://youtu.be/dQw4w9WgXcQ')
