@@ -8,16 +8,10 @@
 <section class="view">
   <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>Glossariy</div>
     <h1>Atamalar lug‘ati</h1><p class="muted">{{ total }} ta atama{% if harf or q %} · topildi: {{ terms|length }} · <a class="link" href="{% url 'lectures:glossary' course.slug %}">hammasi</a>{% endif %}</p></div>
-    {% if not exporting %}
-    <form class="filters" method="get"><label class="search">{% icon 'search' 18 %}<input name="q" value="{{ q }}" placeholder="Atamani qidirish…"></label></form>
-    {% endif %}
+    <form class="filters" method="get" data-gloss-filter><label class="search">{% icon 'search' 18 %}<input name="q" value="{{ q }}" placeholder="Atamani qidirish…"></label></form>
   </div>
 
-  {% if not exporting %}
-  <nav class="alpha">{% for l in letters %}<a href="?harf={{ l|urlencode }}" class="{% if l == harf %}on{% endif %}">{{ l }}</a>{% endfor %}</nav>
-  {% else %}
-  <nav class="alpha">{% for l in letters %}<a href="#h-{{ l }}">{{ l }}</a>{% endfor %}</nav>
-  {% endif %}
+  <nav class="alpha">{% for l in letters %}<a href="{% if exporting %}glossariy.html{% endif %}?harf={{ l|urlencode }}" data-harf="{{ l }}" class="{% if l == harf %}on{% endif %}">{{ l }}</a>{% endfor %}</nav>
 
   <dl class="gloss">
     {% for g in terms %}

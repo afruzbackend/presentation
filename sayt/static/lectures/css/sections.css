@@ -207,3 +207,9 @@ body[data-view="mavzu"] .edit-btn { bottom: 102px; }
 /* oflayn nusxa index.html dan ochilganda: video uchun «Ochish.bat» kerakligi haqida */
 .yt-note { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; gap: 4px; padding: 20px; text-align: center;
   background: rgba(15, 25, 48, .82); color: #FBF6EC; font-size: 17px; line-height: 1.5; }
+
+/* statik nusxadagi tungi rejim tugmasi: belgisi rejimga qarab */
+[data-theme-btn] .th-sun, :root[data-theme="dark"] [data-theme-btn] .th-moon { display: none; }
+:root[data-theme="dark"] [data-theme-btn] .th-sun { display: contents; }
+[data-theme-btn] .th-moon { display: contents; }
+[hidden] { display: none !important; }

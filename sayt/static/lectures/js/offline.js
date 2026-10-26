@@ -62,4 +62,69 @@
       p.appendChild(n);
     });
   }
+
+  /* Server bajaradigan ishlar — statik nusxada brauzerda: tungi rejim, mavzu va atama qidiruvi */
+  const params = new URLSearchParams(location.search);
+  const low = s => (s || '').toLocaleLowerCase('uz');
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // tungi rejim: tanlov brauzerda eslab qolinadi
+  document.querySelectorAll('[data-theme-btn]').forEach(btn => btn.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem('theme', t); } catch (_) { /* xotira yopiq */ }
+  }));
+
+  // mundarija: ?f=Nazariy|Amaliy va ?q=... (Django'dagi bilan bir xil: nom, reja bandlari yoki raqam)
+  const tf = document.querySelector('[data-topic-filter]');
+  if (tf) {
+    const kind = params.get('f') || 'all', q = (params.get('q') || '').trim();
+    tf.querySelectorAll('button[name=f]').forEach(b => b.classList.toggle('on', b.value === kind));
+    tf.querySelector('input[name=q]').value = q;
+    let found = 0;
+    document.querySelectorAll('.cgroup').forEach(g => {
+      let shown = 0;
+      g.querySelectorAll('.card').forEach(c => {
+        const num = parseInt(c.querySelector('.card-num').textContent, 10);
+        const text = low(c.querySelector('.card-title').textContent + ' ' + c.querySelector('.card-plan').textContent);
+        const ok = (kind === 'all' || c.querySelector('.badge').textContent.trim() === kind)
+          && (!q || text.includes(low(q)) || (/^\d+$/.test(q) && num === +q));
+        c.hidden = !ok;
+        if (ok) shown++;
+      });
+      g.hidden = !shown;
+      g.querySelector('.cgroup-head small').textContent = shown + ' ta';
+      found += shown;
+    });
+    const info = document.querySelector('.page-head p.muted');
+    if (q && info) info.innerHTML = `«${esc(q)}» bo‘yicha ${found} ta mavzu topildi · <a class="link" href="mavzular.html">tozalash</a>`;
+    if (!found) {
+      const p = document.createElement('p');
+      p.className = 'muted center';
+      p.textContent = 'Hech narsa topilmadi.';
+      document.querySelector('.cgroup')?.before(p);
+    }
+  }
+
+  // glossariy: ?harf=K va ?q=... (atama yoki ta'rifida)
+  const gf = document.querySelector('[data-gloss-filter]');
+  if (gf) {
+    const harf = params.get('harf') || '', q = low((params.get('q') || '').trim());
+    gf.querySelector('input[name=q]').value = params.get('q') || '';
+    document.querySelectorAll('.alpha a').forEach(a => a.classList.toggle('on', a.dataset.harf === harf));
+    let letter = '', found = 0, total = 0, head = null, inHead = 0;
+    const flush = () => { if (head) head.hidden = !inHead; };
+    document.querySelectorAll('.gloss > *').forEach(el => {
+      if (el.classList.contains('gloss-letter')) { flush(); head = el; inHead = 0; letter = el.textContent.trim(); return; }
+      if (!el.classList.contains('gloss-item')) return;
+      total++;
+      const ok = (!harf || letter === harf) && (!q || low(el.textContent).includes(q));
+      el.hidden = !ok;
+      if (ok) { found++; inHead++; }
+    });
+    flush();
+    const info = document.querySelector('.page-head p.muted');
+    if ((harf || q) && info) info.innerHTML = `${total} ta atama · topildi: ${found} · <a class="link" href="glossariy.html">hammasi</a>`;
+  }
 })();

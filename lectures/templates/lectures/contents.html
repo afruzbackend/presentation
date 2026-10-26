@@ -8,8 +8,7 @@
   <div class="page-head">
     <div><div class="eyebrow"><span class="dot"></span>Mundarija</div><h1>Barcha mavzular</h1>
       <p class="muted">{% if q %}«{{ q }}» bo‘yicha {{ found }} ta mavzu topildi · <a class="link" href="{% url 'lectures:contents' course.slug %}">tozalash</a>{% else %}Mavzu ustiga bosing — darslik slaydlari ochiladi.{% endif %}</p></div>
-    {% if not exporting %}
-    <form class="filters" method="get">
+    <form class="filters" method="get" data-topic-filter>
       <div class="seg">
         <button name="f" value="all" class="{% if kind == 'all' %}on{% endif %}">Barchasi</button>
         <button name="f" value="Nazariy" class="{% if kind == 'Nazariy' %}on{% endif %}">Nazariy</button>
@@ -17,7 +16,6 @@
       </div>
       <label class="search">{% icon 'search' 18 %}<input name="q" value="{{ q }}" placeholder="Qidirish…"></label>
     </form>
-    {% endif %}
   </div>
 
   {% for g in groups %}

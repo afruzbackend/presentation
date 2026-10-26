@@ -2,6 +2,7 @@
 <html lang="uz" data-theme="light">
 <head>
   <meta charset="utf-8">
+  <script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Glossariy — Kompyuter tizimlari</title>
   <meta name="description" content="Kompyuter tizimlari: elektron darslik. Muallif: Oydin Tashtemirova.">
@@ -28,6 +29,8 @@
     <div class="top-actions">
       <a class="icon-btn" href="#jumper" title="Mavzu qidirish"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a>
       
+      <a class="icon-btn" href="#" data-theme-btn title="Yorug‘ / tungi rejim"><span class="th-moon"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg></span><span class="th-sun"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span></a>
+      
     </div>
   </header>
 
@@ -37,12 +40,10 @@
 <section class="view">
   <div class="page-head"><div><div class="eyebrow"><span class="dot"></span>Glossariy</div>
     <h1>Atamalar lug‘ati</h1><p class="muted">169 ta atama</p></div>
-    
+    <form class="filters" method="get" data-gloss-filter><label class="search"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input name="q" value="" placeholder="Atamani qidirish…"></label></form>
   </div>
 
-  
-  <nav class="alpha"><a href="#h-A">A</a><a href="#h-B">B</a><a href="#h-CH">CH</a><a href="#h-D">D</a><a href="#h-E">E</a><a href="#h-F">F</a><a href="#h-H">H</a><a href="#h-I">I</a><a href="#h-J">J</a><a href="#h-K">K</a><a href="#h-L">L</a><a href="#h-M">M</a><a href="#h-N">N</a><a href="#h-O">O</a><a href="#h-O‘">O‘</a><a href="#h-P">P</a><a href="#h-Q">Q</a><a href="#h-R">R</a><a href="#h-S">S</a><a href="#h-SH">SH</a><a href="#h-T">T</a><a href="#h-U">U</a><a href="#h-V">V</a><a href="#h-W">W</a><a href="#h-X">X</a><a href="#h-Y">Y</a></nav>
-  
+  <nav class="alpha"><a href="glossariy.html?harf=A" data-harf="A" class="">A</a><a href="glossariy.html?harf=B" data-harf="B" class="">B</a><a href="glossariy.html?harf=CH" data-harf="CH" class="">CH</a><a href="glossariy.html?harf=D" data-harf="D" class="">D</a><a href="glossariy.html?harf=E" data-harf="E" class="">E</a><a href="glossariy.html?harf=F" data-harf="F" class="">F</a><a href="glossariy.html?harf=H" data-harf="H" class="">H</a><a href="glossariy.html?harf=I" data-harf="I" class="">I</a><a href="glossariy.html?harf=J" data-harf="J" class="">J</a><a href="glossariy.html?harf=K" data-harf="K" class="">K</a><a href="glossariy.html?harf=L" data-harf="L" class="">L</a><a href="glossariy.html?harf=M" data-harf="M" class="">M</a><a href="glossariy.html?harf=N" data-harf="N" class="">N</a><a href="glossariy.html?harf=O" data-harf="O" class="">O</a><a href="glossariy.html?harf=O%E2%80%98" data-harf="O‘" class="">O‘</a><a href="glossariy.html?harf=P" data-harf="P" class="">P</a><a href="glossariy.html?harf=Q" data-harf="Q" class="">Q</a><a href="glossariy.html?harf=R" data-harf="R" class="">R</a><a href="glossariy.html?harf=S" data-harf="S" class="">S</a><a href="glossariy.html?harf=SH" data-harf="SH" class="">SH</a><a href="glossariy.html?harf=T" data-harf="T" class="">T</a><a href="glossariy.html?harf=U" data-harf="U" class="">U</a><a href="glossariy.html?harf=V" data-harf="V" class="">V</a><a href="glossariy.html?harf=W" data-harf="W" class="">W</a><a href="glossariy.html?harf=X" data-harf="X" class="">X</a><a href="glossariy.html?harf=Y" data-harf="Y" class="">Y</a></nav>
 
   <dl class="gloss">
     
@@ -1088,7 +1089,7 @@
     <div class="jumper-panel">
       <form class="jumper-head" action="mavzular.html" method="get">
         <svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <span class="jumper-title">Barcha mavzular</span>
+        <input name="q" type="text" placeholder="Mavzu nomi yoki raqamini yozing va Enter bosing…" autocomplete="off">
         <a href="#yopish"><kbd>Yopish</kbd></a>
       </form>
       <div class="jumper-grid">

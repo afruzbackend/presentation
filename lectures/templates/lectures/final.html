@@ -11,7 +11,7 @@
       <h1>Yakuniy test</h1>
       <p class="muted">Barcha mavzular bo‘yicha {{ total_bank }} ta savoldan tasodifiy {% if exporting %}{{ pick }}{% else %}{{ rows|length }}{% endif %} tasi tanlanadi.
         Har bir to‘g‘ri javob — 1 ball. 86% va undan yuqori — «5», 71% — «4», 56% — «3».</p>
-      {% if not exporting %}<a class="btn ghost" href="{% url 'lectures:final' course.slug %}?new=1">{% icon 'refresh' 18 %} Yangi savollar</a>{% endif %}
+      <a class="btn ghost" href="{% url 'lectures:final' course.slug %}?new=1">{% icon 'refresh' 18 %} Yangi savollar</a>
       <div id="sceneSlot">{% scene 'chip' %}</div>
     </div>
     {% if rows %}

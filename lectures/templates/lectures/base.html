@@ -2,6 +2,7 @@
 <html lang="uz" data-theme="{{ theme }}">
 <head>
   <meta charset="utf-8">
+  {% if exporting %}<script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>{% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{% if course %}{{ course.title }} — elektron darslik{% else %}Elektron darsliklar{% endif %}{% endblock %}</title>
   <meta name="description" content="{% if course %}{{ course.title }}: elektron darslik. Muallif: {{ course.author }}.{% else %}Elektron darsliklar yaratish va ko‘rish dasturi.{% endif %}">
@@ -27,7 +28,9 @@
     <nav class="crumbs">{% block crumbs %}<span>Bosh sahifa</span>{% endblock %}</nav>
     <div class="top-actions">
       {% if course %}<a class="icon-btn" href="#jumper" title="Mavzu qidirish">{% icon 'search' %}</a>{% endif %}
-      {% if not exporting %}
+      {% if exporting %}
+      <a class="icon-btn" href="#" data-theme-btn title="Yorug‘ / tungi rejim"><span class="th-moon">{% icon 'moon' %}</span><span class="th-sun">{% icon 'sun' %}</span></a>
+      {% else %}
       <a class="icon-btn" href="{% url 'lectures:theme' %}?next={{ request.get_full_path|urlencode }}" title="Yorug‘ / tungi rejim">{% if theme == 'dark' %}{% icon 'sun' %}{% else %}{% icon 'moon' %}{% endif %}</a>
       <a class="icon-btn studio-link" href="{% if course %}{% url 'studio:course' course.slug %}{% else %}{% url 'studio:dashboard' %}{% endif %}" title="Studiya — darslikni tahrirlash">{% icon 'pen' %}</a>
       {% endif %}
@@ -55,7 +58,7 @@
     <div class="jumper-panel">
       <form class="jumper-head" action="{% url 'lectures:contents' course.slug %}" method="get">
         {% icon 'search' 18 %}
-        {% if exporting %}<span class="jumper-title">Barcha mavzular</span>{% else %}<input name="q" type="text" placeholder="Mavzu nomi yoki raqamini yozing va Enter bosing…" autocomplete="off">{% endif %}
+        <input name="q" type="text" placeholder="Mavzu nomi yoki raqamini yozing va Enter bosing…" autocomplete="off">
         <a href="#yopish"><kbd>Yopish</kbd></a>
       </form>
       <div class="jumper-grid">
