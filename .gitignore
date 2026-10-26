@@ -4,7 +4,7 @@ __pycache__/
 
 # Mahalliy ma'lumotlar: baza, yuklangan fayllar, parol
 db.sqlite3
-media/
+/media/
 KIRISH.txt
 secret_key.txt
 
@@ -14,4 +14,4 @@ secret_key.txt
 
 # Eksport qilingan ZIP fayllar
 *-oflayn.zip
-backups/
+/backups/
