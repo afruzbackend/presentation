@@ -289,6 +289,18 @@ class SectionsTests(BaseCase):
         self.assertTrue(pdf.file.read(5) == b'%PDF-')
         self.assertContains(self.client.get('/d/kompyuter-tizimlari/taqdimotlar/'), 'res-frame')
 
+    def test_auto_materials(self):
+        self.login()
+        url = '/studio/d/kompyuter-tizimlari/materiallar/yangilash/'
+        self.client.post(url)
+        self.client.post(url)  # qayta bosilsa — ko'paymaydi
+        general = self.course.resources.filter(topic=None)
+        self.assertGreaterEqual(general.filter(kind='material').count(), 10)
+        self.assertEqual(general.count(), general.values('title').distinct().count())
+        tests = general.get(title='Test savollari to‘plami')
+        self.assertTrue(tests.file.read(5) == b'%PDF-')
+        self.assertContains(self.client.get('/d/kompyuter-tizimlari/materiallar/'), 'Glossariy')
+
     def test_qa_and_glossary_editing(self):
         self.login()
         t = '/studio/d/kompyuter-tizimlari/mavzu/1/'

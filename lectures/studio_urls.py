@@ -24,6 +24,7 @@ urlpatterns = [
     path('d/<slug:slug>/eksport/', v.export, name='export'),
     path('d/<slug:slug>/ochirish/', v.course_delete, name='course_delete'),
     path('d/<slug:slug>/materiallar/', v.course_materials, name='materials'),
+    path('d/<slug:slug>/materiallar/yangilash/', v.materials_make, name='materials_make'),
     path('d/<slug:slug>/resurs/<int:pk>/', v.resource_edit, name='resource'),
     path('d/<slug:slug>/resurs/<int:pk>/ochirish/', v.resource_delete, name='resource_delete'),
     path('d/<slug:slug>/video-qoshish/', v.video_add, name='video_add'),

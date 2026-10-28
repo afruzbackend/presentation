@@ -22,6 +22,15 @@
       {% empty %}<div class="st-empty">{% icon 'file' 36 %}<h3>Umumiy material yo‘q</h3></div>
       {% endfor %}
     </div>
+    <form method="post" action="{% url 'studio:materials_make' course.slug %}" class="st-help" style="margin-top:18px">
+      {% csrf_token %}
+      <h3>{% icon 'file' 18 %} Materiallarni matndan tayyorlash</h3>
+      <p class="muted">Darslikdagi matndan 13 ta PDF hujjat tuziladi: to‘liq ma’ruza matni, kalendar-tematik reja, glossariy,
+        test savollari (javobsiz), nazorat va takrorlash savollari, mustaqil ta’lim, amaliy mashg‘ulotlar, savol-javob,
+        baholash mezonlari, adabiyotlar, ta’lim texnologiyasi modellari va texnologik xaritalar.
+        Matnni o‘zgartirgandan keyin qayta bosing — eski nusxalar yangilanadi, o‘zingiz yuklagan fayllarga tegilmaydi.</p>
+      <button class="btn primary">{% icon 'refresh' 18 %} Materiallarni yangilash</button>
+    </form>
 
     {% if topic_items %}
     <h2 class="st-h2" style="margin-top:30px">Mavzulardagi fayllar <small>{{ topic_items|length }} ta</small></h2>

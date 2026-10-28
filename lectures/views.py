@@ -65,9 +65,12 @@ def course_home(request, slug):
         return reverse(f'lectures:{name}', args=[slug])
 
     n_qa = QuickQA.objects.filter(topic__course=course).count()
+    # bir mavzuda PDF va PowerPoint — bitta taqdimot sifatida sanaladi
+    slide_topics = course.resources.filter(kind='slides', topic__isnull=False).values('topic').distinct().count()
+    n_slides = slide_topics + course.resources.filter(kind='slides', topic__isnull=True).count()
     tiles = [
         (r('lecture'), 'book', 'Ma’ruza matni', f'{topics.count()} ta mavzuning to‘liq matni', '#0E7C7B'),
-        (r('slides'), 'monitor', 'Taqdimotlar', f"{res.get('slides', 0)} ta taqdimot", '#C2562D'),
+        (r('slides'), 'monitor', 'Taqdimotlar', f'{n_slides} ta taqdimot', '#C2562D'),
         (r('videos'), 'video', 'Video darsliklar', f"{res.get('video', 0)} ta video", '#9E2A3A'),
         (r('materials'), 'file', 'Materiallar', f"{res.get('material', 0)} ta fayl va havola", '#24508F'),
         (r('tech'), 'layers', 'Fanning ta’lim texnologiyasi', 'Texnologik model va xaritalar', '#3F7D4E'),

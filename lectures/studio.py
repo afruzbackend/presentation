@@ -563,6 +563,22 @@ def topic_slides(request, course, n):
     return redirect(topic_url(topic, 'resurslar'))
 
 
+@studio_view
+@require_POST
+def materials_make(request, course):
+    """Darslik matnidan umumiy materiallar (PDF): ma'ruza matni, reja, glossariy, savollar, topshiriqlar..."""
+    from .materiallar import make_materials
+    from .taqdimot import FontMissing
+    try:
+        made = make_materials(course)
+    except FontMissing as e:
+        messages.error(request, f'Materiallar tayyorlanmadi: {e}')
+    else:
+        messages.success(request, f'{made} ta material (PDF) tayyorlandi yoki yangilandi.')
+    touch(course)
+    return redirect('studio:materials', slug=course.slug)
+
+
 # ------------------------------------------------------------------ glossariy
 @studio_view
 def glossary(request, course):

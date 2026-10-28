@@ -8,7 +8,7 @@
     {% if user.is_authenticated and not exporting %}<a class="act" href="{% url 'studio:resource' x.course.slug x.pk %}" title="Tahrirlash">{% icon 'pen' 14 %}</a>{% endif %}
   </header>
   {% if embed %}
-    {% if x.is_pdf %}<div class="res-frame"><iframe src="{{ x.file.url }}" title="{{ x.title }}"></iframe></div>
+    {% if x.is_pdf %}<div class="res-frame"><iframe src="{{ x.file.url }}" title="{{ x.title }}" loading="lazy"></iframe></div>
     {% elif x.is_video_file %}<video class="res-video" src="{{ x.file.url }}" controls preload="metadata"></video>
     {% elif x.is_image %}<img class="res-img" src="{{ x.file.url }}" alt="{{ x.title }}" loading="lazy">
     {% elif x.url|youtube %}{% yt_player x.url x.title %}
